@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build && vite build --ssr && vite build && vite build --ssr --ssr"
+        "build": "vite build && vite build --ssr && vite build && vite build --ssr --ssr"
     },
     "devDependencies": {
         "@headlessui/react": "^2.0.0",
@@ -22,5 +22,22 @@
         "tailwindcss": "^3.2.1",
         "typescript": "^5.0.2",
         "vite": "^5.0"
+    },
+    "dependencies": {
+        "@hookform/resolvers": "^3.9.0",
+        "@radix-ui/react-dropdown-menu": "^2.1.2",
+        "@radix-ui/react-label": "^2.1.0",
+        "@radix-ui/react-select": "^2.1.2",
+        "@radix-ui/react-slot": "^1.1.0",
+        "@radix-ui/react-switch": "^1.1.1",
+        "@radix-ui/react-tabs": "^1.1.1",
+        "class-variance-authority": "^0.7.0",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.447.0",
+        "react-hook-form": "^7.53.0",
+        "recharts": "^2.12.7",
+        "tailwind-merge": "^2.5.2",
+        "tailwindcss-animate": "^1.0.7",
+        "zod": "^3.23.8"
     }
 }
