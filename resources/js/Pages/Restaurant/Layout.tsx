@@ -53,16 +53,16 @@ export default function RestaurantLayout({ children }: PropsWithChildren) {
 
         <Tabs defaultValue={component} className="w-full">
           <TabsList className="grid w-full grid-cols-4 ">
-            <TabsTrigger value="Restaurant/Menu/Index" asChild>
+            <TabsTrigger value="Restaurant/Menu" asChild>
               <Link href="menu">Menú y Promociones</Link>
             </TabsTrigger>
-            <TabsTrigger value="Restaurant/Information/Index" asChild>
+            <TabsTrigger value="Restaurant/Information" asChild>
               <Link href="information">Información</Link>
             </TabsTrigger>
-            <TabsTrigger value="Restaurant/Photos/Index" asChild>
+            <TabsTrigger value="Restaurant/Photos" asChild>
               <Link href="photos">Fotos</Link>
             </TabsTrigger>
-            <TabsTrigger value="Restaurant/Insights/Index" asChild>
+            <TabsTrigger value="Restaurant/Insights" asChild>
               <Link href="insigths">Estadísticas</Link>
             </TabsTrigger>
           </TabsList>

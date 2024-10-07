@@ -15,7 +15,7 @@ class PhotosController extends Controller
      */
     public function index(Restaurant $restaurant)
     {
-        return Inertia::render('Restaurant/Photos/Index', ['restaurant' => $restaurant]);
+        return Inertia::render('Restaurant/Photos', ['restaurant' => $restaurant]);
     }
 
     /**

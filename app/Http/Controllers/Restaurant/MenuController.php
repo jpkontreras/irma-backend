@@ -15,7 +15,7 @@ class MenuController extends Controller
      */
     public function index(Restaurant $restaurant)
     {
-        return Inertia::render('Restaurant/Menu/Index', ['restaurant' => $restaurant]);
+        return Inertia::render('Restaurant/Menu', ['restaurant' => $restaurant]);
     }
 
     /**

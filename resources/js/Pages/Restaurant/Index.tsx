@@ -28,7 +28,7 @@ import {
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { Link, usePage } from "@inertiajs/react";
 
-export default function EnhancedRestaurantListing() {
+export default function RestaurantIndex() {
   const { props } = usePage();
   const [featuredRestaurant, ...otherRestaurants] = props?.restaurants || [];
   const latestThreeRestaurants = otherRestaurants.slice(0, 3);

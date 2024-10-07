@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Restaurant;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreRestaurantRequest;
+use App\Http\Requests\UpdateRestaurantRequest;
 use App\Models\Restaurant\Restaurant;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,13 +27,13 @@ class RestaurantController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Restaurant/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRestaurantRequest $request)
     {
         $restaurants = Restaurant::all();
         $restaurant = Restaurant::create($request->validated());
@@ -63,7 +65,7 @@ class RestaurantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateRestaurantRequest $request, Restaurant $restaurant)
     {
         //
     }

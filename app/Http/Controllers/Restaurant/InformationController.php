@@ -15,7 +15,7 @@ class InformationController extends Controller
      */
     public function index(Restaurant $restaurant)
     {
-        return Inertia::render('Restaurant/Information/Index', ['restaurant' => $restaurant]);
+        return Inertia::render('Restaurant/Information', ['restaurant' => $restaurant]);
     }
 
     /**

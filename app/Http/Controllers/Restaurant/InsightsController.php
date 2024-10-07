@@ -15,7 +15,7 @@ class InsightsController extends Controller
      */
     public function index(Restaurant $restaurant)
     {
-        return Inertia::render('Restaurant/Insights/Index', ['restaurant' => $restaurant]);
+        return Inertia::render('Restaurant/Insights', ['restaurant' => $restaurant]);
     }
 
     /**

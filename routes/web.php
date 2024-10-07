@@ -8,7 +8,7 @@ use App\Http\Controllers\Restaurant\InsightsController;
 use App\Http\Controllers\Restaurant\MenuController;
 use App\Http\Controllers\Restaurant\PhotosController;
 use App\Http\Controllers\Restaurant\RestaurantController;
-
+use App\Http\Middleware\Restaurant\Share as RestaurantSharedData;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +26,7 @@ Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verif
 
 Route::middleware('auth')->group(function () {
     Route::resource('restaurant', RestaurantController::class);
-    Route::resource('restaurant.menu', MenuController::class);
+    Route::resource('restaurant.menu', MenuController::class)->middleware(RestaurantSharedData::class);
     Route::resource('restaurant.information', InformationController::class);
     Route::resource('restaurant.photos', PhotosController::class);
     Route::resource('restaurant.insigths', InsightsController::class);

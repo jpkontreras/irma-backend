@@ -21,7 +21,7 @@ import {
   Cell,
 } from "recharts";
 
-import RestaurantLayout from "../Layout";
+import RestaurantLayout from "./Layout";
 
 const restaurant = {
   name: "Gourmet Delight",

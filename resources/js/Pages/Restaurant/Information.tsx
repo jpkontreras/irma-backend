@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Edit, Plus } from "lucide-react";
-import RestaurantLayout from "../Layout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChevronRight, Clock, Globe, MapPin, Phone } from "lucide-react";
+import RestaurantLayout from "./Layout";
+import { usePage } from "@inertiajs/react";
 
 const restaurant = {
   name: "Gourmet Delight",
@@ -62,8 +63,7 @@ const restaurant = {
           name: "Vegetable Risotto",
           price: "$18.99",
           description: "Creamy Arborio rice with seasonal vegetables",
-          image:
-            "https://g-okjkzwvjrmg.vusercontent.net/placeholder.svg?height=100&width=100",
+          image: "/placeholder.svg?height=100&width=100",
         },
       ],
     },
@@ -112,81 +112,75 @@ const restaurant = {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
-export default function Menu() {
+export default function Information() {
+  const { props } = usePage();
+
   return (
     <RestaurantLayout>
       <Card>
         <CardHeader>
-          <CardTitle>Menú y Promociones</CardTitle>
+          <CardTitle>Información del Restaurante</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
-            {restaurant.menu.map((category, index) => (
-              <div key={index}>
-                <h3 className="text-xl font-semibold mb-4">
-                  {category.category}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {category.items.map((item, itemIndex) => (
-                    <Card key={itemIndex}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-4">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="w-20 h-20 object-cover rounded"
-                          />
-                          <div>
-                            <h4 className="font-semibold">{item.name}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {item.description}
-                            </p>
-                            <p className="font-medium mt-1">{item.price}</p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="mt-2 w-full"
-                        >
-                          <Edit className="w-4 h-4 mr-2" /> Editar
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
-                  <Card>
-                    <CardContent className="p-4 flex items-center justify-center h-full">
-                      <Button variant="outline">
-                        <Plus className="w-4 h-4 mr-2" /> Añadir Plato
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-xl font-semibold mb-4">Promociones</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {restaurant.promotions.map((promo, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-4">
-                      <h4 className="font-semibold">{promo.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {promo.description}
-                      </p>
-                      <Button variant="outline" size="sm" className="mt-2">
-                        <Edit className="w-4 h-4 mr-2" /> Editar
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-                <Card>
-                  <CardContent className="p-4 flex items-center justify-center h-full">
-                    <Button variant="outline">
-                      <Plus className="w-4 h-4 mr-2" /> Añadir Promoción
-                    </Button>
-                  </CardContent>
-                </Card>
+              <img
+                src="https://g-okjkzwvjrmg.vusercontent.net/placeholder.svg?height=300&width=400"
+                alt="Restaurant"
+                className="w-full h-64 object-cover rounded-lg mb-4"
+              />
+              <p className="text-lg mb-4">{restaurant.description}</p>
+              <Button variant="outline">Editar Descripción</Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
+                  Ubicación y Contacto
+                </h3>
+                <p className="flex items-center">
+                  <MapPin className="w-4 h-4 mr-2" /> {restaurant.address}
+                </p>
+                <p className="flex items-center mt-2">
+                  <Phone className="w-4 h-4 mr-2" /> {restaurant.phone}
+                </p>
+                <p className="flex items-center mt-2">
+                  <Globe className="w-4 h-4 mr-2" /> {restaurant.website}
+                </p>
+                <Button variant="outline" className="mt-2">
+                  Editar Información de Contacto
+                </Button>
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
+                  Horario de Atención
+                </h3>
+                <p className="flex items-center">
+                  <Clock className="w-4 h-4 mr-2" /> {restaurant.hours}
+                </p>
+                <Button variant="outline" className="mt-2">
+                  Editar Horario
+                </Button>
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-2">Servicios</h3>
+                <ul className="grid grid-cols-2 gap-2">
+                  <li className="flex items-center">
+                    <ChevronRight className="w-4 h-4 mr-1" /> Terraza
+                  </li>
+                  <li className="flex items-center">
+                    <ChevronRight className="w-4 h-4 mr-1" /> Acceso para Sillas
+                    de Ruedas
+                  </li>
+                  <li className="flex items-center">
+                    <ChevronRight className="w-4 h-4 mr-1" /> Wi-Fi Gratis
+                  </li>
+                  <li className="flex items-center">
+                    <ChevronRight className="w-4 h-4 mr-1" /> Bar Completo
+                  </li>
+                </ul>
+                <Button variant="outline" className="mt-2">
+                  Editar Servicios
+                </Button>
               </div>
             </div>
           </div>
