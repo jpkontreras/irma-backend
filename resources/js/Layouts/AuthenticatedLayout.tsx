@@ -161,7 +161,7 @@ export default function Authenticated({
         </nav> */}
 
         <LeftNav />
-        <div className="flex flex-1 flex-col sm:ml-14">
+        <div className="flex flex-1 flex-col">
           {header && (
             <header className="bg-white shadow dark:bg-gray-800">
               <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 md:max-w-7xl lg:px-8">

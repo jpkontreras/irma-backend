@@ -61,12 +61,12 @@ import { Link } from '@inertiajs/react';
 
 export function Dash() {
   return (
-    <div className="bg-muted/40 flex h-full w-full flex-col">
-      <aside className="bg-background fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r sm:flex">
+    <div className="flex h-full w-full flex-col bg-muted/40">
+      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           <Link
             href="#"
-            className="bg-primary text-primary-foreground group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold md:h-8 md:w-8 md:text-base"
+            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
           >
             <Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
             <span className="sr-only">Acme Inc</span>
@@ -76,7 +76,7 @@ export function Dash() {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <Home className="h-5 w-5" />
                   <span className="sr-only">Dashboard</span>
@@ -88,7 +88,7 @@ export function Dash() {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="bg-accent text-accent-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <ShoppingCart className="h-5 w-5" />
                   <span className="sr-only">Orders</span>
@@ -100,7 +100,7 @@ export function Dash() {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <Package className="h-5 w-5" />
                   <span className="sr-only">Products</span>
@@ -112,7 +112,7 @@ export function Dash() {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <Users2 className="h-5 w-5" />
                   <span className="sr-only">Customers</span>
@@ -124,7 +124,7 @@ export function Dash() {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <LineChart className="h-5 w-5" />
                   <span className="sr-only">Analytics</span>
@@ -140,7 +140,7 @@ export function Dash() {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                 >
                   <Settings className="h-5 w-5" />
                   <span className="sr-only">Settings</span>
@@ -173,7 +173,7 @@ export function Dash() {
                   <CardTitle className="text-4xl">$1,329</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-xs text-muted-foreground">
                     +25% from last week
                   </div>
                 </CardContent>
@@ -187,7 +187,7 @@ export function Dash() {
                   <CardTitle className="text-4xl">$5,329</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-xs text-muted-foreground">
                     +10% from last month
                   </div>
                 </CardContent>
@@ -268,7 +268,7 @@ export function Dash() {
                         <TableRow className="bg-accent">
                           <TableCell>
                             <div className="font-medium">Liam Johnson</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               liam@example.com
                             </div>
                           </TableCell>
@@ -288,7 +288,7 @@ export function Dash() {
                         <TableRow>
                           <TableCell>
                             <div className="font-medium">Olivia Smith</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               olivia@example.com
                             </div>
                           </TableCell>
@@ -308,7 +308,7 @@ export function Dash() {
                         <TableRow>
                           <TableCell>
                             <div className="font-medium">Noah Williams</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               noah@example.com
                             </div>
                           </TableCell>
@@ -328,7 +328,7 @@ export function Dash() {
                         <TableRow>
                           <TableCell>
                             <div className="font-medium">Emma Brown</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               emma@example.com
                             </div>
                           </TableCell>
@@ -348,7 +348,7 @@ export function Dash() {
                         <TableRow>
                           <TableCell>
                             <div className="font-medium">Liam Johnson</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               liam@example.com
                             </div>
                           </TableCell>
@@ -368,7 +368,7 @@ export function Dash() {
                         <TableRow>
                           <TableCell>
                             <div className="font-medium">Liam Johnson</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               liam@example.com
                             </div>
                           </TableCell>
@@ -388,7 +388,7 @@ export function Dash() {
                         <TableRow>
                           <TableCell>
                             <div className="font-medium">Olivia Smith</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               olivia@example.com
                             </div>
                           </TableCell>
@@ -408,7 +408,7 @@ export function Dash() {
                         <TableRow>
                           <TableCell>
                             <div className="font-medium">Emma Brown</div>
-                            <div className="text-muted-foreground hidden text-sm md:inline">
+                            <div className="hidden text-sm text-muted-foreground md:inline">
                               emma@example.com
                             </div>
                           </TableCell>
@@ -434,7 +434,7 @@ export function Dash() {
           </div>
           <div>
             <Card className="overflow-hidden" x-chunk="dashboard-05-chunk-4">
-              <CardHeader className="bg-muted/50 flex flex-row items-start">
+              <CardHeader className="flex flex-row items-start bg-muted/50">
                 <div className="grid gap-0.5">
                   <CardTitle className="group flex items-center gap-2 text-lg">
                     Order Oe31b70H
@@ -513,7 +513,7 @@ export function Dash() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-3">
                     <div className="font-semibold">Shipping Information</div>
-                    <address className="text-muted-foreground grid gap-0.5 not-italic">
+                    <address className="grid gap-0.5 not-italic text-muted-foreground">
                       <span>Liam Johnson</span>
                       <span>1234 Main St.</span>
                       <span>Anytown, CA 12345</span>
@@ -553,7 +553,7 @@ export function Dash() {
                   <div className="font-semibold">Payment Information</div>
                   <dl className="grid gap-3">
                     <div className="flex items-center justify-between">
-                      <dt className="text-muted-foreground flex items-center gap-1">
+                      <dt className="flex items-center gap-1 text-muted-foreground">
                         <CreditCard className="h-4 w-4" />
                         Visa
                       </dt>
@@ -562,8 +562,8 @@ export function Dash() {
                   </dl>
                 </div>
               </CardContent>
-              <CardFooter className="bg-muted/50 flex flex-row items-center border-t px-6 py-3">
-                <div className="text-muted-foreground text-xs">
+              <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
+                <div className="text-xs text-muted-foreground">
                   Updated <time dateTime="2023-11-23">November 23, 2023</time>
                 </div>
                 <Pagination className="ml-auto mr-0 w-auto">

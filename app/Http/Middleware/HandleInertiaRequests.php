@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Label;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -30,15 +31,15 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+
         return [
             ...parent::share($request),
-            'auth' => [
-                'user' => $request->user(),
-            ],
-            'ziggy' => fn () => [
-                ...(new Ziggy)->toArray(),
-                'location' => $request->url(),
-            ],
+            'auth' => ['user' => $request->user()],
+            'ziggy' => fn() => [...(new Ziggy)->toArray(), 'location' => $request->url()],
+            'labels' => fn() => $request->routeIs('menu.*') ? [
+                'tags' =>  Label::tagsWithChildren(),
+                "categories" => Label::parentCategories()->get()
+            ] : []
         ];
     }
 }
