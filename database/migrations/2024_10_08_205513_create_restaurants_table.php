@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('label_menu_item', function (Blueprint $table) {
-            $table->foreignUlid('menu_item_id')->constrained('menu_items')->onDelete('cascade');
-            $table->unsignedBigInteger('label_id');
-            $table->foreign('label_id')->references('id')->on('labels')->onDelete('cascade');
+        Schema::create('restaurants', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->text('logo')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('label_menu_item');
+        Schema::dropIfExists('restaurants');
     }
 };

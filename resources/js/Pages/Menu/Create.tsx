@@ -1,3 +1,4 @@
+import { Alert, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,6 +12,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import Authenticated from '@/Layouts/AuthenticatedLayout';
+import { PageProps } from '@/types';
 import { useForm, usePage } from '@inertiajs/react';
 import {
   Beef,
@@ -24,26 +26,38 @@ import {
   Salad,
   Shell,
 } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 type MenuItem = {
   id: string;
   name: string;
   description: string;
   price: string;
-  category: string;
-  mealType: string;
-  dietaryTags: string[];
-  specialTags: string[];
-  image: string;
+  labels: {
+    categories: Category[];
+    tags: Tag[];
+  };
 };
 
 type Category = {
   id: string;
   name: string;
   icon: React.ReactNode;
-  subcategories?: Category[];
 };
+
+type Tag = {
+  id: string;
+  name: string;
+  children: Tag[];
+};
+
+interface FormData {
+  name: string;
+  description: string;
+  price: string;
+  categories: string[];
+  tags: string[];
+}
 
 const icons: Record<string, React.ReactNode> = {
   '1': <Pizza />,
@@ -58,14 +72,16 @@ const icons: Record<string, React.ReactNode> = {
 };
 
 export default function CreateMenu() {
-  const { props = {} } = usePage();
-  const { labels = [] } = props;
+  const { props } = usePage<PageProps & MenuItem>();
+  const { labels } = props;
   console.log({ labels });
 
-  const { data, setData, post, processing, errors } = useForm('create-menu', {
+  const { data, setData, post, processing, errors } = useForm<FormData>({
     name: '',
-    price: '',
     description: '',
+    price: '',
+    categories: [],
+    tags: [],
   });
 
   function onSubmit(event: MouseEvent) {
@@ -75,49 +91,21 @@ export default function CreateMenu() {
 
   const submitDisabled = useMemo(() => !data.name || !data.price, [data]);
 
-  useEffect(() => {
-    console.log({ submitDisabled });
-  }, [submitDisabled]);
+  const handleCategoryClick = (categoryId: string) => {
+    const updatedCategories = data.categories.includes(categoryId)
+      ? data.categories.filter((id) => id !== categoryId)
+      : [...data.categories, categoryId];
 
-  // const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  // const [newItem, setNewItem] = useState<Partial<MenuItem>>({
-  //   name: '',
-  //   description: '',
-  //   price: '',
-  //   category: '',
-  //   mealType: '',
-  //   dietaryTags: [],
-  //   specialTags: [],
-  //   image: '/placeholder.svg?height=50&width=50',
-  // });
+    setData('categories', updatedCategories);
+  };
 
-  // const addMenuItem = useCallback(() => {
-  //   if (newItem.name && newItem.price && newItem.category) {
-  //     setMenuItems((prevItems) => [
-  //       ...prevItems,
-  //       { ...newItem, id: Date.now().toString() } as MenuItem,
-  //     ]);
-  //     setNewItem({
-  //       name: '',
-  //       description: '',
-  //       price: '',
-  //       category: '',
-  //       mealType: '',
-  //       dietaryTags: [],
-  //       specialTags: [],
-  //       image: '/placeholder.svg?height=50&width=50',
-  //     });
-  //   }
-  // }, [newItem]);
+  const handleTagChange = (tagId: string, checked: boolean) => {
+    const updatedTags = checked
+      ? [...data.tags, tagId]
+      : data.tags.filter((id) => id !== tagId);
 
-  // const updateNewItem = (field: keyof MenuItem, value: string | string[]) => {
-  //   setNewItem((prev) => ({ ...prev, [field]: value }));
-  // };
-
-  // const categories = labels?.categories.map((category: Category) => ({
-  //   ...category,
-  //   icon:
-  // }));
+    setData('tags', updatedTags);
+  };
 
   return (
     <Authenticated
@@ -128,6 +116,12 @@ export default function CreateMenu() {
         </>
       }
     >
+      {errors.categories && (
+        <Alert variant="destructive" className="mt-2">
+          <AlertTitle>{errors.categories}</AlertTitle>
+        </Alert>
+      )}
+
       <div className="flex w-full items-center justify-center py-8">
         <div className="w-full max-w-5xl overflow-hidden rounded-lg bg-white shadow-lg">
           <form className="space-y-6 p-6">
@@ -179,8 +173,12 @@ export default function CreateMenu() {
                 {labels?.categories.map((category) => (
                   <Card
                     key={`category_${category.id}`}
-                    // className={`cursor-pointer hover:bg-gray-50 ${newItem.category === category.name ? 'border-primary' : ''}`}
-                    // onClick={() => updateNewItem('category', category.name)}
+                    className={`cursor-pointer hover:bg-gray-50 ${
+                      data.categories.includes(category.id)
+                        ? 'border-primary'
+                        : ''
+                    }`}
+                    onClick={() => handleCategoryClick(category.id)}
                   >
                     <CardContent className="flex flex-col items-center justify-center p-2">
                       {icons[category.id]}
@@ -202,26 +200,14 @@ export default function CreateMenu() {
                       className="flex items-center"
                     >
                       <Checkbox
-                        id={`dietary-${item?.name}`}
-                        checked={false}
-                        onCheckedChange={(checked) => {
-                          // if (checked) {
-                          //   updateNewItem('dietaryTags', [
-                          //     ...(newItem.dietaryTags || []),
-                          //     tag,
-                          //   ]);
-                          // } else {
-                          //   updateNewItem(
-                          //     'dietaryTags',
-                          //     (newItem.dietaryTags || []).filter(
-                          //       (t) => t !== tag,
-                          //     ),
-                          //   );
-                          // }
-                        }}
+                        id={`dietary-${item.id}`}
+                        checked={data.tags.includes(item.id)}
+                        onCheckedChange={(checked) =>
+                          handleTagChange(item.id, checked as boolean)
+                        }
                       />
                       <label
-                        htmlFor={`dietary-${item.name}`}
+                        htmlFor={`dietary-${item.id}`}
                         className="ml-2 text-sm"
                       >
                         {item.name}

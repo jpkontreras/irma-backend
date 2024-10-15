@@ -11,18 +11,23 @@ class StoreMenuRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return true; // Adjust authorization logic as needed
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:labels,id',
+            'tags' => 'nullable|array',
+            'tags.*' => 'exists:labels,id',
+        
         ];
     }
 }

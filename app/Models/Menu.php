@@ -10,18 +10,22 @@ class Menu extends Model
 {
     use HasFactory, HasUlids;
 
-    protected $fillable = ["user_id", "name", "description"];
+    /**MENU_CREATION_TYPE */
+    const REGULAR = 1;
+    const OCR = 2;
+    const TEMPLATE = 3;
+
+    protected $fillable = ['restaurant_id', 'name', 'description', 'type'];
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 
     public function items()
     {
         return $this->hasMany(MenuItem::class);
     }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
 
     public function labels()
     {
