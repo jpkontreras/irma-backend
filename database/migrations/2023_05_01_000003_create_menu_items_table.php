@@ -8,18 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::create('menu_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('menu_id')->constrained()->onDelete('cascade');
+            $table->foreignUlid('restaurant_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->string('price');
+            $table->string('currency')->default('CLP');
             $table->text('description');
-            $table->unsignedTinyInteger('type');
-            $table->foreignId('restaurant_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('menu_items');
     }
 };
