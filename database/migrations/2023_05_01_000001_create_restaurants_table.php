@@ -12,10 +12,12 @@ return new class extends Migration
     {
         Schema::create('restaurants', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->string('name', 255);
-            $table->text('description');
-            $table->string('logo');
-            $table->foreignUlid('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('address');
+            $table->foreignId('user_id')
+                  ->constrained()
+                  ->onDelete('cascade');
             $table->timestamps();
         });
     }

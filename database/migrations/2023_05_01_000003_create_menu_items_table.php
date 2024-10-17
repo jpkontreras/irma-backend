@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('menu_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('menu_id')->constrained()->onDelete('cascade');
-            $table->foreignUlid('restaurant_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('price');
             $table->string('currency')->default('CLP');

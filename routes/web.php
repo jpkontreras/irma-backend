@@ -27,7 +27,6 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('restaurants.menus.menu-items', MenuItemController::class)
-        ->nested()
         ->names([
             'index' => 'restaurants.menus.menu-items.index',
             'create' => 'restaurants.menus.menu-items.create',
