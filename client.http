@@ -1,0 +1,107 @@
+@baseUrl = http://localhost:8000/api
+@token = 
+
+### Register a new user
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123",
+    "password_confirmation": "password123"
+}
+
+### Login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+    "email": "john@example.com",
+    "password": "password123"
+}
+
+### Store the token from the login response in the @token variable
+
+### Create a new restaurant
+POST {{baseUrl}}/restaurants
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Delicious Bites",
+    "description": "A cozy restaurant serving international cuisine",
+    "address": "123 Main St, Cityville, State 12345",
+    "phone": "+1234567890"
+}
+
+### Create a menu for the restaurant
+# Replace {restaurant_id} with the actual ID returned from the previous request
+POST {{baseUrl}}/restaurants/{restaurant_id}/menus
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Lunch Special",
+    "description": "Our delicious lunch offerings"
+}
+
+### Create a menu item for the menu
+# Replace {restaurant_id} and {menu_id} with the actual IDs
+POST {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Grilled Chicken Salad",
+    "description": "Fresh mixed greens with grilled chicken breast",
+    "price": 12.99
+}
+
+### Create another menu item with tag and category
+# Replace {restaurant_id} and {menu_id} with the actual IDs
+POST {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Vegetarian Pasta",
+    "description": "Penne pasta with mixed vegetables in tomato sauce",
+    "price": 14.99,
+    "tags": ["Vegetarian", "Pasta"],
+    "category": "Main Course"
+}
+
+### Get all restaurants
+GET {{baseUrl}}/restaurants
+Authorization: Bearer {{token}}
+
+### Get a specific restaurant
+# Replace {restaurant_id} with an actual ID
+GET {{baseUrl}}/restaurants/{restaurant_id}
+Authorization: Bearer {{token}}
+
+### Get all menus for a restaurant
+# Replace {restaurant_id} with an actual ID
+GET {{baseUrl}}/restaurants/{restaurant_id}/menus
+Authorization: Bearer {{token}}
+
+### Get a specific menu
+# Replace {restaurant_id} and {menu_id} with actual IDs
+GET {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}
+Authorization: Bearer {{token}}
+
+### Get all menu items for a menu
+# Replace {restaurant_id} and {menu_id} with actual IDs
+GET {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
+Authorization: Bearer {{token}}
+
+### Get a specific menu item
+# Replace {restaurant_id}, {menu_id}, and {item_id} with actual IDs
+GET {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items/{item_id}
+Authorization: Bearer {{token}}
+
+### Logout
+POST {{baseUrl}}/logout
+Authorization: Bearer {{token}}
+

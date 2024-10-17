@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\MenuController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,16 +28,10 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('restaurants.menus.menu-items', MenuItemController::class)
-        ->names([
-            'index' => 'restaurants.menus.menu-items.index',
-            'create' => 'restaurants.menus.menu-items.create',
-            'store' => 'restaurants.menus.menu-items.store',
-            'show' => 'restaurants.menus.menu-items.show',
-            'edit' => 'restaurants.menus.menu-items.edit',
-            'update' => 'restaurants.menus.menu-items.update',
-            'destroy' => 'restaurants.menus.menu-items.destroy',
-        ]);
+    // Nested resources for restaurants, menus, and menu items
+    Route::resource('restaurants', RestaurantController::class);
+    Route::resource('restaurants.menus', MenuController::class);
+    Route::resource('restaurants.menus.menu-items', MenuItemController::class);
 });
 
 require __DIR__.'/auth.php';
