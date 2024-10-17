@@ -11,19 +11,10 @@ use App\Http\Requests\StoreMenuItemRequest;
 use App\Http\Requests\UpdateMenuItemRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MenuItemController extends Controller
 {
-    protected $restaurant;
-    protected $menu;
-
-    public function __construct(Restaurant $restaurant, Menu $menu)
-    {
-        $this->restaurant = $restaurant;
-        $this->menu = $menu;
-    }
-
     public function index(Restaurant $restaurant, Menu $menu): View
     {
         $menuItems = $menu->menuItems()->paginate(10);
@@ -37,12 +28,22 @@ class MenuItemController extends Controller
 
     public function store(StoreMenuItemRequest $request, Restaurant $restaurant, Menu $menu): RedirectResponse
     {
-        $validatedData = $request->validated();
+        DB::transaction(function () use ($request, $restaurant, $menu) {
+            $menuItem = MenuItem::create([
+                'name' => $request->input('name'),
+                'price' => $request->input('price'),
+                'currency' => $request->input('currency'),
+                'description' => $request->input('description'),
+                'menu_id' => $menu->id,
+                'restaurant_id' => $restaurant->id,
+            ]);
 
-        $menuItem = new MenuItem($validatedData);
-        $menuItem->restaurant()->associate($restaurant);
-        $menuItem->menu()->associate($menu);
-        $menuItem->save();
+            if (!empty($request->input('label_ids'))) {
+                $menuItem->attachLabels($request->input('label_ids'));
+            }
+
+            return $menuItem;
+        });
 
         return redirect()->route('restaurants.menus.menu-items.index', [$restaurant, $menu])
             ->with('success', 'Menu item created successfully.');
