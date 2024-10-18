@@ -10,7 +10,7 @@ class StoreRestaurantRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return true; // Assuming any authenticated user can create a restaurant
     }
 
     public function rules(): array
@@ -18,7 +18,7 @@ class StoreRestaurantRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'logo' => 'required|url',
+            'logo' => 'nullable|string',
         ];
     }
 }

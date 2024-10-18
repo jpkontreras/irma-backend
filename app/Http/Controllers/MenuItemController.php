@@ -9,7 +9,7 @@ use App\Models\Restaurant;
 use App\Models\Menu;
 use App\Http\Requests\StoreMenuItemRequest;
 use App\Http\Requests\UpdateMenuItemRequest;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
 
@@ -26,9 +26,9 @@ class MenuItemController extends Controller
         return view('menu-items.create', compact('restaurant', 'menu'));
     }
 
-    public function store(StoreMenuItemRequest $request, Restaurant $restaurant, Menu $menu): RedirectResponse
+    public function store(StoreMenuItemRequest $request, Restaurant $restaurant, Menu $menu): JsonResponse
     {
-        DB::transaction(function () use ($request, $restaurant, $menu) {
+        $menuItem = DB::transaction(function () use ($request, $restaurant, $menu) {
             $menuItem = MenuItem::create([
                 'name' => $request->input('name'),
                 'price' => $request->input('price'),
@@ -45,8 +45,7 @@ class MenuItemController extends Controller
             return $menuItem;
         });
 
-        return redirect()->route('restaurants.menus.menu-items.index', [$restaurant, $menu])
-            ->with('success', 'Menu item created successfully.');
+        return response()->json($menuItem, 201);
     }
 
     public function show(Restaurant $restaurant, Menu $menu, MenuItem $menuItem): View

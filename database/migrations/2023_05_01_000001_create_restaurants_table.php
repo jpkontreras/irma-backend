@@ -14,7 +14,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('address');
+            $table->string('logo')->nullable();
             $table->foreignId('user_id')
                   ->constrained()
                   ->onDelete('cascade');

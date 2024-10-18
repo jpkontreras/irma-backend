@@ -1,9 +1,20 @@
-@baseUrl = http://localhost:8000/api
-@token = 
+@baseUrl = http://localhost:8000
+@apiUrl = http://localhost:8000/api
+
+### Get CSRF Cookie
+# @name getCsrfCookie
+GET {{baseUrl}}/sanctum/csrf-cookie
+
+### Extract XSRF-TOKEN and laravel_session from the Set-Cookie header
+@xsrfToken = {{getCsrfCookie.response.headers.XSRF-TOKEN}}
+@laravelSession = {{getCsrfCookie.response.headers.Set-Cookie.laravel_session}}
 
 ### Register a new user
+# @name register
 POST {{baseUrl}}/register
 Content-Type: application/json
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 {
     "name": "John Doe",
@@ -13,20 +24,27 @@ Content-Type: application/json
 }
 
 ### Login
+# @name login
 POST {{baseUrl}}/login
 Content-Type: application/json
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 {
     "email": "john@example.com",
     "password": "password123"
 }
 
-### Store the token from the login response in the @token variable
+### Get User Profile
+GET {{baseUrl}}/user
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 ### Create a new restaurant
-POST {{baseUrl}}/restaurants
+POST {{apiUrl}}/restaurants
 Content-Type: application/json
-Authorization: Bearer {{token}}
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 {
     "name": "Delicious Bites",
@@ -37,9 +55,10 @@ Authorization: Bearer {{token}}
 
 ### Create a menu for the restaurant
 # Replace {restaurant_id} with the actual ID returned from the previous request
-POST {{baseUrl}}/restaurants/{restaurant_id}/menus
+POST {{apiUrl}}/restaurants/{restaurant_id}/menus
 Content-Type: application/json
-Authorization: Bearer {{token}}
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 {
     "name": "Lunch Special",
@@ -48,9 +67,10 @@ Authorization: Bearer {{token}}
 
 ### Create a menu item for the menu
 # Replace {restaurant_id} and {menu_id} with the actual IDs
-POST {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
+POST {{apiUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
 Content-Type: application/json
-Authorization: Bearer {{token}}
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 {
     "name": "Grilled Chicken Salad",
@@ -60,9 +80,10 @@ Authorization: Bearer {{token}}
 
 ### Create another menu item with tag and category
 # Replace {restaurant_id} and {menu_id} with the actual IDs
-POST {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
+POST {{apiUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
 Content-Type: application/json
-Authorization: Bearer {{token}}
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 {
     "name": "Vegetarian Pasta",
@@ -73,35 +94,41 @@ Authorization: Bearer {{token}}
 }
 
 ### Get all restaurants
-GET {{baseUrl}}/restaurants
-Authorization: Bearer {{token}}
+GET {{apiUrl}}/restaurants
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 ### Get a specific restaurant
 # Replace {restaurant_id} with an actual ID
-GET {{baseUrl}}/restaurants/{restaurant_id}
-Authorization: Bearer {{token}}
+GET {{apiUrl}}/restaurants/{restaurant_id}
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 ### Get all menus for a restaurant
 # Replace {restaurant_id} with an actual ID
-GET {{baseUrl}}/restaurants/{restaurant_id}/menus
-Authorization: Bearer {{token}}
+GET {{apiUrl}}/restaurants/{restaurant_id}/menus
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 ### Get a specific menu
 # Replace {restaurant_id} and {menu_id} with actual IDs
-GET {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}
-Authorization: Bearer {{token}}
+GET {{apiUrl}}/restaurants/{restaurant_id}/menus/{menu_id}
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 ### Get all menu items for a menu
 # Replace {restaurant_id} and {menu_id} with actual IDs
-GET {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
-Authorization: Bearer {{token}}
+GET {{apiUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 ### Get a specific menu item
 # Replace {restaurant_id}, {menu_id}, and {item_id} with actual IDs
-GET {{baseUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items/{item_id}
-Authorization: Bearer {{token}}
+GET {{apiUrl}}/restaurants/{restaurant_id}/menus/{menu_id}/items/{item_id}
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}
 
 ### Logout
 POST {{baseUrl}}/logout
-Authorization: Bearer {{token}}
-
+X-XSRF-TOKEN: {{xsrfToken}}
+Cookie: XSRF-TOKEN={{xsrfToken}}; laravel_session={{laravelSession}}

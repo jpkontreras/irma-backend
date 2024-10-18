@@ -19,10 +19,10 @@ class RestaurantController extends Controller
         return RestaurantResource::collection($restaurants);
     }
 
-    public function store(StoreRestaurantRequest $request): RestaurantResource
+    public function store(StoreRestaurantRequest $request)
     {
-        $restaurant = $request->user()->restaurants()->create($request->validated());
-        return new RestaurantResource($restaurant);
+        $restaurant = auth()->user()->restaurants()->create($request->validated());
+        return response()->json($restaurant, 201);
     }
 
     public function show(Restaurant $restaurant): RestaurantResource
