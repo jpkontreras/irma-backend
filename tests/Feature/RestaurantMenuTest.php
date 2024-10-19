@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Feature;
+
 use App\Models\Restaurant;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -61,11 +63,9 @@ test('can create a menu item with labels', function () {
     $restaurant = Restaurant::factory()->create(['user_id' => $this->user->id]);
     $menu = Menu::factory()->create(['restaurant_id' => $restaurant->id]);
     
-    // Create parent labels
     $parentCategory = Label::factory()->create(['type' => Label::CATEGORY, 'parent_id' => null]);
     $parentTag = Label::factory()->create(['type' => Label::TAG, 'parent_id' => null]);
     
-    // Create child labels
     $childCategory = Label::factory()->create(['type' => Label::CATEGORY, 'parent_id' => $parentCategory->id]);
     $childTag = Label::factory()->create(['type' => Label::TAG, 'parent_id' => $parentTag->id]);
 
@@ -90,8 +90,8 @@ test('can create a menu item with labels', function () {
     ]);
 
     $createdMenuItem = MenuItem::where('name', 'Special Item')->first();
-    $this->assertTrue($createdMenuItem->labels->contains($childCategory->id));
-    $this->assertTrue($createdMenuItem->labels->contains($childTag->id));
+    expect($createdMenuItem->labels->pluck('id')->toArray())->toContain($childCategory->id);
+    expect($createdMenuItem->labels->pluck('id')->toArray())->toContain($childTag->id);
 });
 
 test('can create multiple menu items for a menu', function () {
@@ -120,7 +120,7 @@ test('can create multiple menu items for a menu', function () {
         $response->assertStatus(201);
     }
 
-    $this->assertDatabaseCount('menu_items', 2);
+    expect(MenuItem::count())->toBe(2);
     foreach ($menuItems as $item) {
         $this->assertDatabaseHas('menu_items', array_merge($item, ['menu_id' => $menu->id]));
     }
