@@ -2,7 +2,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { PageProps } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import { __ } from 'laravel-translator';
 import {
   Book,
   CameraIcon,
@@ -11,8 +13,6 @@ import {
   PlusCircle,
   ScanText,
 } from 'lucide-react';
-import { __ } from 'laravel-translator';
-import { PageProps } from '@/types';
 
 interface Restaurant {
   id: number;
@@ -46,7 +46,9 @@ export default function Dashboard() {
             <div className="mb-8 flex items-center justify-between">
               <Tabs defaultValue="resumen" className="w-full max-w-md">
                 <TabsList>
-                  <TabsTrigger value="resumen">{__('messages.summary')}</TabsTrigger>
+                  <TabsTrigger value="resumen">
+                    {__('messages.summary')}
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -83,9 +85,14 @@ export default function Dashboard() {
                     <p className="mb-4 flex-grow text-sm text-gray-600">
                       {__('messages.culinary_creativity_shine')}
                     </p>
-                    <Link href={route('restaurants.menus.create', { restaurant: restaurant.id })}>
+                    <Link
+                      href={route('restaurants.menus.create', {
+                        restaurant: restaurant.id,
+                      })}
+                    >
                       <Button className="mt-auto w-full bg-orange-500 text-white hover:bg-orange-600">
-                        <PlusCircle className="mr-2 h-4 w-4" /> {__('messages.start_creating_menu')}
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        {__('messages.start_creating_menu')}
                       </Button>
                     </Link>
                   </CardContent>
@@ -104,7 +111,8 @@ export default function Dashboard() {
                       variant="outline"
                       className="mt-auto w-full border-blue-300 text-blue-700 hover:bg-blue-100"
                     >
-                      <ScanText className="mr-2 h-4 w-4" /> {__('messages.scan_menu')}
+                      <ScanText className="mr-2 h-4 w-4" />
+                      {__('messages.scan_menu')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -122,7 +130,8 @@ export default function Dashboard() {
                       variant="outline"
                       className="mt-auto w-full border-green-300 text-green-700 hover:bg-green-100"
                     >
-                      <Book className="mr-2 h-4 w-4" /> {__('messages.view_predefined_menus')}
+                      <Book className="mr-2 h-4 w-4" />
+                      {__('messages.view_predefined_menus')}
                     </Button>
                   </CardContent>
                 </Card>
