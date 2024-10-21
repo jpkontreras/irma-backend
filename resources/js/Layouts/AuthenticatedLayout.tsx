@@ -1,172 +1,272 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
+import { User } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import {
+  BadgeCheck,
+  Building2,
+  ChevronsUpDown,
+  CreditCard,
+  Home,
+  LogOut,
+  Menu,
+  Sparkles,
+  UserIcon,
+} from 'lucide-react';
+import { PropsWithChildren, ReactNode } from 'react';
 
 export default function Authenticated({
   header,
   children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-  const user = usePage().props.auth.user;
-
-  const [showingNavigationDropdown, setShowingNavigationDropdown] =
-    useState(false);
+  const user = usePage().props.auth.user as User;
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex">
-              <div className="flex shrink-0 items-center">
-                <Link href="/">
-                  <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                </Link>
-              </div>
-
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <NavLink
+    <SidebarProvider defaultOpen={true}>
+      <Sidebar
+        className="flex-shrink-0 border-r border-gray-200 dark:border-gray-700"
+      >
+        <SidebarHeader className="p-6">
+          <Link href="/">
+            <ApplicationLogo className="h-10 w-auto" />
+          </Link>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link
                   href={route('dashboard')}
-                  active={route().current('dashboard')}
+                  className="flex items-center space-x-3 px-6 py-3 text-base hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
-                  Dashboard
-                </NavLink>
-              </div>
-            </div>
-
-            <div className="hidden sm:ms-6 sm:flex sm:items-center">
-              <div className="relative ms-3">
-                <Dropdown>
-                  <Dropdown.Trigger>
-                    <span className="inline-flex rounded-md">
-                      <button
-                        type="button"
-                        className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                      >
+                  <Home className="h-6 w-6" />
+                  <span>Dashboard</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link
+                  href={route('restaurants.index')}
+                  className="flex items-center space-x-3 px-6 py-3 text-base hover:bg-gray-200 dark:hover:bg-gray-800"
+                >
+                  <Building2 className="h-6 w-6" />
+                  <span>Restaurants</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            {/* Uncomment these when you have created the corresponding routes
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href={route('menus.index')} className="flex items-center space-x-3 px-6 py-3 text-base hover:bg-gray-200 dark:hover:bg-gray-800">
+                    <Utensils className="h-6 w-6" />
+                    <span>Menus</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href={route('reservations.index')} className="flex items-center space-x-3 px-6 py-3 text-base hover:bg-gray-200 dark:hover:bg-gray-800">
+                    <Calendar className="h-6 w-6" />
+                    <span>Reservations</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href={route('orders.index')} className="flex items-center space-x-3 px-6 py-3 text-base hover:bg-gray-200 dark:hover:bg-gray-800">
+                    <ClipboardList className="h-6 w-6" />
+                    <span>Orders</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href={route('settings.index')} className="flex items-center space-x-3 px-6 py-3 text-base hover:bg-gray-200 dark:hover:bg-gray-800">
+                    <Settings className="h-6 w-6" />
+                    <span>Settings</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              */}
+          </SidebarMenu>
+        </SidebarContent>
+        <SidebarFooter className="p-6">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                  >
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
                         {user.name}
-
-                        <svg
-                          className="-me-0.5 ms-2 h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                    </span>
-                  </Dropdown.Trigger>
-
-                  <Dropdown.Content>
-                    <Dropdown.Link href={route('profile.edit')}>
-                      Profile
-                    </Dropdown.Link>
-                    <Dropdown.Link
-                      href={route('logout')}
-                      method="post"
-                      as="button"
-                    >
-                      Log Out
-                    </Dropdown.Link>
-                  </Dropdown.Content>
-                </Dropdown>
-              </div>
-            </div>
-
-            <div className="-me-2 flex items-center sm:hidden">
-              <button
-                onClick={() =>
-                  setShowingNavigationDropdown(
-                    (previousState) => !previousState,
-                  )
-                }
-                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
-              >
-                <svg
-                  className="h-6 w-6"
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 24 24"
+                      </span>
+                      <span className="truncate text-xs">{user.email}</span>
+                    </div>
+                    <ChevronsUpDown className="ml-auto size-4" />
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
                 >
-                  <path
-                    className={
-                      !showingNavigationDropdown ? 'inline-flex' : 'hidden'
-                    }
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                  <path
-                    className={
-                      showingNavigationDropdown ? 'inline-flex' : 'hidden'
-                    }
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
+                  <DropdownMenuLabel className="p-0 font-normal">
+                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                      <Avatar className="h-8 w-8 rounded-lg">
+                        <AvatarImage src={user.avatar} alt={user.name} />
+                        <AvatarFallback className="rounded-lg">
+                          CN
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-semibold">
+                          {user.name}
+                        </span>
+                        <span className="truncate text-xs">{user.email}</span>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                      <Sparkles />
+                      Upgrade to Pro
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                      <BadgeCheck />
+                      Account
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <CreditCard />
+                      Billing
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={route('profile.edit')}
+                        className="flex w-full items-center"
+                      >
+                        <UserIcon className="h-5 w-5" />
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
 
-        <div
-          className={
-            (showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'
-          }
-        >
-          <div className="space-y-1 pb-3 pt-2">
-            <ResponsiveNavLink
-              href={route('dashboard')}
-              active={route().current('dashboard')}
-            >
-              Dashboard
-            </ResponsiveNavLink>
-          </div>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={route('logout')}
+                        method="post"
+                        as="button"
+                        className="flex w-full items-center"
+                      >
+                        <LogOut />
+                        Log out
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
 
-          <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
-            <div className="px-4">
-              <div className="text-base font-medium text-gray-800 dark:text-gray-200">
-                {user.name}
+          {/*   <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary">
+                <UserIcon className="h-6 w-6 flex-shrink-0" />
+                <span className="flex-grow truncate text-left">
+                  {user.name}
+                </span>
+                <ChevronUp className="h-5 w-5 flex-shrink-0" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="start" className="w-64">
+              <DropdownMenuItem asChild>
+                <Link
+                  href={route('profile.edit')}
+                  className="flex items-center space-x-3 px-4 py-2"
+                >
+                  <UserIcon className="h-5 w-5" />
+                  <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  href={route('logout')}
+                  method="post"
+                  as="button"
+                  className="flex w-full items-center space-x-3 px-4 py-2 text-left"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  <span>Log Out</span>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu> */}
+        </SidebarFooter>
+      </Sidebar>
+      <SidebarInset>
+        <div className="flex flex-1 flex-col">
+          <header className="bg-white shadow-sm dark:bg-gray-800">
+            <div className="flex w-full items-center justify-between px-6 py-4">
+              <div className="flex items-center">
+                <SidebarTrigger className="mr-4 text-gray-500 hover:text-gray-600 focus:text-gray-600 focus:outline-none">
+                  <Menu className="h-6 w-6" />
+                </SidebarTrigger>
+                {header}
               </div>
-              <div className="text-sm font-medium text-gray-500">
-                {user.email}
-              </div>
             </div>
+          </header>
 
-            <div className="mt-3 space-y-1">
-              <ResponsiveNavLink href={route('profile.edit')}>
-                Profile
-              </ResponsiveNavLink>
-              <ResponsiveNavLink
-                method="post"
-                href={route('logout')}
-                as="button"
-              >
-                Log Out
-              </ResponsiveNavLink>
-            </div>
-          </div>
+          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-100 dark:bg-gray-900">
+            <div className="w-full px-6 py-8">{children}</div>
+          </main>
         </div>
-      </nav>
-
-      {header && (
-        <header className="bg-white shadow dark:bg-gray-800">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            {header}
-          </div>
-        </header>
-      )}
-
-      <main>{children}</main>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
