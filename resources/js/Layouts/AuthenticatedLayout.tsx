@@ -1,4 +1,5 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
+import Breadcrumbs from '@/Components/Breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -257,6 +258,9 @@ export default function Authenticated({
                 </SidebarTrigger>
                 {header}
               </div>
+            </div>
+            <div className="px-6 py-2">
+              <Breadcrumbs />
             </div>
           </header>
 
