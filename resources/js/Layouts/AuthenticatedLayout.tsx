@@ -44,9 +44,7 @@ export default function Authenticated({
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <Sidebar
-        className="flex-shrink-0 border-r border-gray-200 dark:border-gray-700"
-      >
+      <Sidebar className="flex-shrink-0 border-r border-gray-200 dark:border-gray-700">
         <SidebarHeader className="p-6">
           <Link href="/">
             <ApplicationLogo className="h-10 w-auto" />

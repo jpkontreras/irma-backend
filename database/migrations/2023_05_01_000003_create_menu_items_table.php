@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('price');
             $table->string('currency')->default('CLP');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

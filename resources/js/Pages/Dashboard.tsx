@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
 import {
   Book,
   CameraIcon,
   ChevronDown,
   Clock,
+  Edit,
   PlusCircle,
   ScanText,
 } from 'lucide-react';
@@ -17,16 +18,30 @@ import {
 interface Restaurant {
   id: number;
   name: string;
-  // Add other restaurant properties as needed
+}
+
+interface Menu {
+  id: number;
+  name: string;
 }
 
 interface Props {
-  restaurant: Restaurant;
+  restaurant?: Restaurant;
+  menu?: Menu;
 }
 
 export default function Dashboard() {
   const { props } = usePage<PageProps & Props>();
-  const { restaurant } = props;
+  const { restaurant, menu } = props;
+  const { post, processing } = useForm();
+
+  const handleCreateOrEditMenu = () => {
+    post(
+      route('restaurants.menus.create-or-redirect', {
+        restaurant: restaurant?.id,
+      }),
+    );
+  };
 
   return (
     <AuthenticatedLayout
@@ -40,7 +55,7 @@ export default function Dashboard() {
     >
       <Head title={__('messages.dashboard')} />
 
-      <div className="bg-gray-100 p-8">
+      <div className="bg-gray-100">
         <div className="mx-auto max-w-6xl overflow-hidden rounded-xl bg-white shadow-sm">
           <div className="p-6">
             <div className="mb-8 flex items-center justify-between">
@@ -78,23 +93,31 @@ export default function Dashboard() {
                 <Card className="flex flex-col border-2 border-orange-200">
                   <CardHeader>
                     <CardTitle className="text-2xl font-bold text-orange-800">
-                      {__('messages.create_menu')}
+                      {menu
+                        ? __('messages.edit_menu')
+                        : __('messages.create_menu')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-grow flex-col">
                     <p className="mb-4 flex-grow text-sm text-gray-600">
-                      {__('messages.culinary_creativity_shine')}
+                      {menu
+                        ? __('messages.continue_editing_menu')
+                        : __('messages.culinary_creativity_shine')}
                     </p>
-                    <Link
-                      href={route('restaurants.menus.create', {
-                        restaurant: restaurant.id,
-                      })}
+                    <Button
+                      className="mt-auto w-full bg-orange-500 text-white hover:bg-orange-600"
+                      onClick={handleCreateOrEditMenu}
+                      disabled={processing}
                     >
-                      <Button className="mt-auto w-full bg-orange-500 text-white hover:bg-orange-600">
+                      {menu ? (
+                        <Edit className="mr-2 h-4 w-4" />
+                      ) : (
                         <PlusCircle className="mr-2 h-4 w-4" />
-                        {__('messages.start_creating_menu')}
-                      </Button>
-                    </Link>
+                      )}
+                      {menu
+                        ? __('messages.continue_editing_menu')
+                        : __('messages.start_creating_menu')}
+                    </Button>
                   </CardContent>
                 </Card>
                 <Card className="flex flex-col border-2 border-blue-200">

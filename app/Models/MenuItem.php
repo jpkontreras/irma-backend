@@ -22,6 +22,10 @@ class MenuItem extends Model
         'menu_id',
     ];
 
+    protected $attributes = [
+        'description' => '', // Set default value for description
+    ];
+
     public function menu(): BelongsTo
     {
         return $this->belongsTo(Menu::class);

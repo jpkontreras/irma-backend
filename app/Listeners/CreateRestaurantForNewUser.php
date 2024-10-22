@@ -4,13 +4,9 @@ namespace App\Listeners;
 
 use App\Models\Restaurant;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
-class CreateRestaurantForNewUser implements ShouldQueue
+class CreateRestaurantForNewUser
 {
-    use InteractsWithQueue;
-
     /**
      * Create the event listener.
      */

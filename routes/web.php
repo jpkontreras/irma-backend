@@ -31,6 +31,14 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('restaurants', RestaurantController::class);
     Route::resource('restaurants.menus', MenuController::class);
     Route::resource('restaurants.menus.menu-items', MenuItemController::class);
+
+    Route::post('/restaurants/{restaurant}/menus/create-or-redirect', [MenuController::class, 'createOrRedirect'])
+        ->name('restaurants.menus.create-or-redirect');
+
+    Route::get('/restaurants/{restaurant}/menus/{menu}/menu-items/create', [MenuItemController::class, 'create'])
+        ->name('restaurants.menus.menu-items.create');
+    Route::post('/restaurants/{restaurant}/menus/{menu}/menu-items', [MenuItemController::class, 'store'])
+        ->name('restaurants.menus.menu-items.store');
 });
 
 require __DIR__.'/auth.php';

@@ -19,26 +19,12 @@ class StoreMenuItemRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'currency' => 'required|string|size:3',
-            'description' => 'nullable|string',
-            'label_ids' => [
-                'nullable',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $invalidLabels = Label::whereIn('id', $value)
-                        ->whereNull('parent_id')
-                        ->exists();
-
-                    if ($invalidLabels) {
-                        $fail('Parent categories or tags cannot be assigned to menu items.');
-                    }
-                },
-            ],
-            'label_ids.*' => [
-                'exists:labels,id',
-                Rule::notIn(Label::whereNull('parent_id')->pluck('id')->toArray()),
-            ],
+            'description' => 'nullable|string', // Make description optional
+            'price' => 'required|integer|min:0',
+            'category_ids' => 'nullable|array',
+            'category_ids.*' => 'exists:labels,id',
+            'tag_ids' => 'nullable|array',
+            'tag_ids.*' => 'exists:labels,id',
         ];
     }
 }

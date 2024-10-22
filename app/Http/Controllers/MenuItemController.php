@@ -4,48 +4,68 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\AddMenuItemAction;
 use App\Models\MenuItem;
 use App\Models\Restaurant;
 use App\Models\Menu;
+use App\Models\Label;
 use App\Http\Requests\StoreMenuItemRequest;
 use App\Http\Requests\UpdateMenuItemRequest;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
+use Inertia\Response;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\DB;
 
 class MenuItemController extends Controller
 {
-    public function index(Restaurant $restaurant, Menu $menu): View
+    public function __construct(
+        private AddMenuItemAction $addMenuItemAction
+    ) {}
+
+    public function index(Restaurant $restaurant, Menu $menu): Response
     {
-        $menuItems = $menu->menuItems()->paginate(10);
-        return view('menu-items.index', compact('restaurant', 'menu', 'menuItems'));
+        $menuItems = $menu->menuItems()->with(['labels'])->paginate(10);
+
+        return Inertia::render('MenuItems/Index', [
+            'restaurant' => $restaurant,
+            'menu' => $menu,
+            'menuItems' => $menuItems,
+        ]);
     }
 
-    public function create(Restaurant $restaurant, Menu $menu): View
+    public function create(Restaurant $restaurant, Menu $menu): Response
     {
-        return view('menu-items.create', compact('restaurant', 'menu'));
+        $categories = Label::categories()->get();
+        $tags = Label::tags()->get();
+
+        return Inertia::render('MenuItems/Create', [
+            'restaurant' => $restaurant,
+            'menu' => $menu,
+            'categories' => $categories,
+            'tags' => $tags,
+        ]);
     }
 
-    public function store(StoreMenuItemRequest $request, Restaurant $restaurant, Menu $menu): JsonResponse
+    public function store(StoreMenuItemRequest $request, Restaurant $restaurant, Menu $menu): Response
     {
-        $menuItem = DB::transaction(function () use ($request, $restaurant, $menu) {
-            $menuItem = MenuItem::create([
-                'name' => $request->input('name'),
-                'price' => $request->input('price'),
-                'currency' => $request->input('currency'),
-                'description' => $request->input('description'),
-                'menu_id' => $menu->id,
-                'restaurant_id' => $restaurant->id,
+        try {
+            $menuItem = $this->addMenuItemAction->execute($menu, $request->validated());
+
+            return Inertia::render('MenuItems/Create', [
+                'restaurant' => $restaurant,
+                'menu' => $menu,
+                'categories' => Label::categories()->get(),
+                'tags' => Label::tags()->get(),
+                'createdMenuItem' => $menuItem, // Send the created menu item back to the client
             ]);
-
-            if (!empty($request->input('label_ids'))) {
-                $menuItem->attachLabels($request->input('label_ids'));
-            }
-
-            return $menuItem;
-        });
-
-        return response()->json($menuItem, 201);
+        } catch (\Exception $e) {
+            return Inertia::render('MenuItems/Create', [
+                'restaurant' => $restaurant,
+                'menu' => $menu,
+                'categories' => Label::categories()->get(),
+                'tags' => Label::tags()->get(),
+            ])->withException($e);
+        }
     }
 
     public function show(Restaurant $restaurant, Menu $menu, MenuItem $menuItem): View
@@ -65,7 +85,7 @@ class MenuItemController extends Controller
         $menuItem->update($validatedData);
 
         return redirect()->route('restaurants.menus.menu-items.index', [$restaurant, $menu])
-            ->with('success', 'Menu item updated successfully.');
+            ->with('success', trans('messages.menu_item_updated_successfully'));
     }
 
     public function destroy(Restaurant $restaurant, Menu $menu, MenuItem $menuItem): RedirectResponse
@@ -73,6 +93,6 @@ class MenuItemController extends Controller
         $menuItem->delete();
 
         return redirect()->route('restaurants.menus.menu-items.index', [$restaurant, $menu])
-            ->with('success', 'Menu item deleted successfully.');
+            ->with('success', trans('messages.menu_item_deleted_successfully'));
     }
 }
