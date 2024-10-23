@@ -16,9 +16,9 @@ class UpdateRestaurantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
-            'logo' => 'sometimes|required|url',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'logo' => 'nullable|string',
         ];
     }
 }

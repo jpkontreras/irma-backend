@@ -48,16 +48,21 @@ class RestaurantController extends Controller
         ]);
     }
 
-    public function update(UpdateRestaurantRequest $request, Restaurant $restaurant): RestaurantResource
+    public function edit(Restaurant $restaurant)
     {
-        $this->authorize('update', $restaurant);
+        return Inertia::render('Restaurants/Edit', [
+            'restaurant' => $restaurant
+        ]);
+    }
+
+    public function update(UpdateRestaurantRequest $request, Restaurant $restaurant)
+    {
         $restaurant->update($request->validated());
-        return new RestaurantResource($restaurant);
+        return redirect()->route('restaurants.show', $restaurant)->with('success', __('messages.restaurant_updated'));
     }
 
     public function destroy(Restaurant $restaurant): Response
     {
-        $this->authorize('delete', $restaurant);
         $restaurant->delete();
         return response()->noContent();
     }

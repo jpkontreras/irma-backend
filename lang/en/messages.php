@@ -81,6 +81,10 @@ return [
     'restaurant_details' => 'Restaurant Details',
     'view_menus' => 'View Menus',
     'edit_restaurant' => 'Edit Restaurant',
+    'restaurant_name' => 'Restaurant Name',
+    'description' => 'Description',
+    'logo' => 'Logo',
+    'update_restaurant' => 'Update Restaurant',
 
     // New translations
     'menu_details' => 'Menu Details',
@@ -89,4 +93,5 @@ return [
     'no_menu_items' => 'No menu items available for this menu.',
     'view_menu_items' => 'View Menu Items',
     'menu_items_for' => 'Menu Items for :menu',
+
 ];

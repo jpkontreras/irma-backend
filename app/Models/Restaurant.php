@@ -63,4 +63,9 @@ class Restaurant extends Model
     {
         return $this->hasManyThrough(MenuItem::class, Menu::class);
     }
+
+    public function scopeOwnedByCurrentUser($query)
+    {
+        return $query->where('user_id', auth()->id());
+    }
 }

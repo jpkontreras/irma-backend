@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { __ } from 'laravel-translator';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { PageProps } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { PageProps } from '@/types';
+import { Head, router, useForm } from '@inertiajs/react';
+import { __ } from 'laravel-translator';
 import { PlusCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 type MenuItem = {
   id: string;
@@ -51,11 +50,10 @@ interface Props extends PageProps {
   };
 }
 
-export default function Edit() {
-  const { restaurant, menu, labels } = usePage<Props>().props;
+export default function Edit({ restaurant, menu, labels }: Props) {
   const [menuItems, setMenuItems] = useState<MenuItem[]>(menu.menuItems || []);
 
-  const { data, setData, patch, processing, errors } = useForm({
+  const { data, setData, put, processing, errors } = useForm({
     name: menu.name,
     description: menu.description,
     menuItems: menuItems,
@@ -65,7 +63,11 @@ export default function Edit() {
     setData('menuItems', menuItems);
   }, [menuItems]);
 
-  const updateMenuItem = (index: number, field: string, value: string | number) => {
+  const updateMenuItem = (
+    index: number,
+    field: string,
+    value: string | number,
+  ) => {
     const updatedItems = [...menuItems];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
     setMenuItems(updatedItems);
@@ -87,20 +89,41 @@ export default function Edit() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    patch(route('restaurants.menus.update', { restaurant: restaurant.id, menu: menu.id }));
+    put(
+      route('restaurants.menus.update', {
+        restaurant: restaurant.id,
+        menu: menu.id,
+      }),
+      {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: () => {
+          router.visit(
+            route('restaurants.menus.show', {
+              restaurant: restaurant.id,
+              menu: menu.id,
+            }),
+          );
+        },
+      },
+    );
   };
 
-  const handleCategoryChange = (index: number, categoryId: string, checked: boolean) => {
+  const handleCategoryChange = (
+    index: number,
+    categoryId: string,
+    checked: boolean,
+  ) => {
     const updatedItems = [...menuItems];
     const item = updatedItems[index];
     const categories = item.labels.categories || [];
-    
+
     if (checked) {
       item.labels.categories = [...categories, categoryId];
     } else {
-      item.labels.categories = categories.filter(id => id !== categoryId);
+      item.labels.categories = categories.filter((id) => id !== categoryId);
     }
-    
+
     setMenuItems(updatedItems);
   };
 
@@ -108,19 +131,23 @@ export default function Edit() {
     const updatedItems = [...menuItems];
     const item = updatedItems[index];
     const tags = item.labels.tags || [];
-    
+
     if (checked) {
       item.labels.tags = [...tags, tagId];
     } else {
-      item.labels.tags = tags.filter(id => id !== tagId);
+      item.labels.tags = tags.filter((id) => id !== tagId);
     }
-    
+
     setMenuItems(updatedItems);
   };
 
   return (
     <AuthenticatedLayout
-      header={<h2 className="text-xl font-semibold leading-tight text-gray-800">{__('messages.edit_menu')}</h2>}
+      header={
+        <h2 className="text-xl font-semibold leading-tight text-gray-800">
+          {__('messages.edit_menu')}
+        </h2>
+      }
     >
       <Head title={__('messages.edit_menu')} />
 
@@ -130,7 +157,10 @@ export default function Edit() {
             <div className="p-6 text-gray-900">
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <Label htmlFor="name" className="mb-2 block text-sm font-bold text-gray-700">
+                  <Label
+                    htmlFor="name"
+                    className="mb-2 block text-sm font-bold text-gray-700"
+                  >
                     {__('messages.menu_name')}
                   </Label>
                   <Input
@@ -141,7 +171,10 @@ export default function Edit() {
                   />
                 </div>
                 <div className="mb-4">
-                  <Label htmlFor="description" className="mb-2 block text-sm font-bold text-gray-700">
+                  <Label
+                    htmlFor="description"
+                    className="mb-2 block text-sm font-bold text-gray-700"
+                  >
                     {__('messages.menu_description')}
                   </Label>
                   <Textarea
@@ -152,26 +185,39 @@ export default function Edit() {
                   />
                 </div>
                 <div className="mb-4">
-                  <h3 className="mb-2 text-lg font-semibold">{__('messages.menu_items')}</h3>
+                  <h3 className="mb-2 text-lg font-semibold">
+                    {__('messages.menu_items')}
+                  </h3>
                   {menuItems.map((item, index) => (
-                    <div key={item.id} className="mb-8 border-b-2 border-gray-200 pb-8">
-                      <div className="grid grid-cols-[1fr_1fr_auto] gap-4 mb-4">
+                    <div
+                      key={item.id}
+                      className="mb-8 border-b-2 border-gray-200 pb-8"
+                    >
+                      <div className="mb-4 grid grid-cols-[1fr_1fr_auto] gap-4">
                         <div>
-                          <Label htmlFor={`itemName_${index}`}>{__('messages.item_name')}</Label>
+                          <Label htmlFor={`itemName_${index}`}>
+                            {__('messages.item_name')}
+                          </Label>
                           <Input
                             id={`itemName_${index}`}
                             value={item.name}
-                            onChange={(e) => updateMenuItem(index, 'name', e.target.value)}
+                            onChange={(e) =>
+                              updateMenuItem(index, 'name', e.target.value)
+                            }
                             placeholder={__('messages.item_name_placeholder')}
                             required
                           />
                         </div>
                         <div>
-                          <Label htmlFor={`itemPrice_${index}`}>{__('messages.price')}</Label>
+                          <Label htmlFor={`itemPrice_${index}`}>
+                            {__('messages.price')}
+                          </Label>
                           <Input
                             id={`itemPrice_${index}`}
                             value={item.price}
-                            onChange={(e) => updateMenuItem(index, 'price', e.target.value)}
+                            onChange={(e) =>
+                              updateMenuItem(index, 'price', e.target.value)
+                            }
                             required
                           />
                         </div>
@@ -186,15 +232,27 @@ export default function Edit() {
                         <Label>{__('messages.categories')}</Label>
                         <div className="grid grid-cols-3 gap-2">
                           {labels.categories.map((category) => (
-                            <div key={`category_${category.id}_${index}`} className="flex items-center">
+                            <div
+                              key={`category_${category.id}_${index}`}
+                              className="flex items-center"
+                            >
                               <Checkbox
                                 id={`category-${category.id}-${index}`}
-                                checked={item.labels.categories?.includes(category.id)}
+                                checked={item.labels.categories?.includes(
+                                  category.id,
+                                )}
                                 onCheckedChange={(checked) =>
-                                  handleCategoryChange(index, category.id, checked as boolean)
+                                  handleCategoryChange(
+                                    index,
+                                    category.id,
+                                    checked as boolean,
+                                  )
                                 }
                               />
-                              <label htmlFor={`category-${category.id}-${index}`} className="ml-2 text-sm">
+                              <label
+                                htmlFor={`category-${category.id}-${index}`}
+                                className="ml-2 text-sm"
+                              >
                                 {category.name}
                               </label>
                             </div>
@@ -202,37 +260,60 @@ export default function Edit() {
                         </div>
                       </div>
 
-                      {labels.tags.filter(tag => !tag.parent_id).map((parentTag) => (
-                        <div key={`parentTag_${parentTag.id}_${index}`} className="mb-4">
-                          <Label>{parentTag.name}</Label>
-                          <div className="grid grid-cols-3 gap-2">
-                            {labels.tags
-                              .filter(tag => tag.parent_id === parentTag.id)
-                              .map((childTag) => (
-                                <div key={`childTag_${childTag.id}_${index}`} className="flex items-center">
-                                  <Checkbox
-                                    id={`tag-${childTag.id}-${index}`}
-                                    checked={item.labels.tags?.includes(childTag.id)}
-                                    onCheckedChange={(checked) =>
-                                      handleTagChange(index, childTag.id, checked as boolean)
-                                    }
-                                  />
-                                  <label htmlFor={`tag-${childTag.id}-${index}`} className="ml-2 text-sm">
-                                    {childTag.name}
-                                  </label>
-                                </div>
-                              ))}
+                      {labels.tags
+                        .filter((tag) => !tag.parent_id)
+                        .map((parentTag) => (
+                          <div
+                            key={`parentTag_${parentTag.id}_${index}`}
+                            className="mb-4"
+                          >
+                            <Label>{parentTag.name}</Label>
+                            <div className="grid grid-cols-3 gap-2">
+                              {labels.tags
+                                .filter((tag) => tag.parent_id === parentTag.id)
+                                .map((childTag) => (
+                                  <div
+                                    key={`childTag_${childTag.id}_${index}`}
+                                    className="flex items-center"
+                                  >
+                                    <Checkbox
+                                      id={`tag-${childTag.id}-${index}`}
+                                      checked={item.labels.tags?.includes(
+                                        childTag.id,
+                                      )}
+                                      onCheckedChange={(checked) =>
+                                        handleTagChange(
+                                          index,
+                                          childTag.id,
+                                          checked as boolean,
+                                        )
+                                      }
+                                    />
+                                    <label
+                                      htmlFor={`tag-${childTag.id}-${index}`}
+                                      className="ml-2 text-sm"
+                                    >
+                                      {childTag.name}
+                                    </label>
+                                  </div>
+                                ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
 
                       <div>
-                        <Label htmlFor={`itemDescription_${index}`}>{__('messages.item_description')}</Label>
+                        <Label htmlFor={`itemDescription_${index}`}>
+                          {__('messages.item_description')}
+                        </Label>
                         <Textarea
                           id={`itemDescription_${index}`}
                           value={item.description}
-                          onChange={(e) => updateMenuItem(index, 'description', e.target.value)}
-                          placeholder={__('messages.item_description_placeholder')}
+                          onChange={(e) =>
+                            updateMenuItem(index, 'description', e.target.value)
+                          }
+                          placeholder={__(
+                            'messages.item_description_placeholder',
+                          )}
                           rows={4}
                         />
                       </div>
@@ -240,7 +321,11 @@ export default function Edit() {
                   ))}
                 </div>
                 <div className="mt-4">
-                  <Button type="submit" className="w-full" disabled={processing}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={processing}
+                  >
                     {__('messages.save_changes')}
                   </Button>
                 </div>

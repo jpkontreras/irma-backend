@@ -42,6 +42,7 @@ export default function Authenticated({
   children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
   const user = usePage().props.auth.user as User;
+  const { breadcrumbs } = usePage().props;
 
   return (
     <SidebarProvider defaultOpen={true}>
@@ -260,7 +261,7 @@ export default function Authenticated({
               </div>
             </div>
             <div className="px-6 py-2">
-              <Breadcrumbs />
+              {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
             </div>
           </header>
 

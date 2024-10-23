@@ -76,7 +76,7 @@ return [
     'no_restaurants' => 'No se encontraron restaurantes.',
     'no_menus' => 'No hay menús disponibles para este restaurante.',
     'restaurant_created' => 'Restaurante creado exitosamente.',
-    'restaurant_updated' => 'Restaurante actualizado exitosamente.',
+    'restaurant_updated' => 'Restaurante actualizado con éxito.',
     'restaurant_deleted' => 'Restaurante eliminado exitosamente.',
     'menu_created' => 'Menú creado exitosamente.',
     'menu_updated' => 'Menú actualizado exitosamente.',
@@ -85,6 +85,11 @@ return [
     'restaurant_details' => 'Detalles del Restaurante',
     'view_menus' => 'Ver Menús',
     'edit_restaurant' => 'Editar Restaurante',
+    'edit_restaurant' => 'Editar Restaurante',
+    'restaurant_name' => 'Nombre del Restaurante',
+    'description' => 'Descripción',
+    'logo' => 'Logo',
+    'update_restaurant' => 'Actualizar Restaurante',
 
     // New translations
     'menu_details' => 'Detalles del Menú',
@@ -106,4 +111,13 @@ return [
     'median_price' => 'Precio Mediano',
     'add_menu_item' => 'Añadir Elemento al Menú',
     'menu_items_for' => 'Elementos del Menú para :menu',
+
+    // Breadcrumb translations
+    'breadcrumbs' => [
+        'restaurants' => 'Restaurantes',
+        'menus' => 'Menús',
+        'menu_items' => 'Elementos del Menú',
+        'edit' => 'Editar',
+        'create' => 'Crear',
+    ],
 ];

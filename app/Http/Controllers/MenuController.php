@@ -66,10 +66,11 @@ class MenuController extends Controller
         ]);
     }
 
-    public function update(UpdateMenuRequest $request, Restaurant $restaurant, Menu $menu): JsonResponse
+    public function update(UpdateMenuRequest $request, Restaurant $restaurant, Menu $menu)
     {
         $menu->update($request->validated());
-        return response()->json($menu);
+        return redirect()->route('restaurants.menus.show', ['restaurant' => $restaurant, 'menu' => $menu])
+            ->with('success', __('messages.menu_updated'));
     }
 
     public function destroy(Restaurant $restaurant, Menu $menu): JsonResponse

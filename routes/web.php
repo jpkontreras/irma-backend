@@ -18,7 +18,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])
+    ->name('dashboard')
+    ->breadcrumb('Dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -44,4 +46,4 @@ Route::middleware(['auth'])->group(function () {
         ->name('restaurants.menus.show');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
