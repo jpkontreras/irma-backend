@@ -112,12 +112,18 @@ return [
     'add_menu_item' => 'Añadir Elemento al Menú',
     'menu_items_for' => 'Elementos del Menú para :menu',
 
-    // Breadcrumb translations
-    'breadcrumbs' => [
-        'restaurants' => 'Restaurantes',
-        'menus' => 'Menús',
-        'menu_items' => 'Elementos del Menú',
-        'edit' => 'Editar',
-        'create' => 'Crear',
-    ],
+    // Breadcrumb translations (moved to the main array)
+    'home' => 'Inicio',
+    'dashboard' => 'Panel de Control',
+    'profile' => 'Perfil',
+    'restaurants' => 'Restaurantes',
+    'create_restaurant' => 'Crear Restaurante',
+    'edit_restaurant' => 'Editar Restaurante',
+    'menus' => 'Menús',
+    'create_menu' => 'Crear Menú',
+    'edit_menu' => 'Editar Menú',
+    'create_or_redirect_menu' => 'Crear o Redirigir Menú',
+    'menu_items' => 'Elementos del Menú',
+    'create_menu_item' => 'Crear Elemento del Menú',
+    'edit_menu_item' => 'Editar Elemento del Menú',
 ];

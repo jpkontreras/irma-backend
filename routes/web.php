@@ -19,8 +19,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])
-    ->name('dashboard')
-    ->breadcrumb('Dashboard');
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -36,14 +35,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/restaurants/{restaurant}/menus/create-or-redirect', [MenuController::class, 'createOrRedirect'])
         ->name('restaurants.menus.create-or-redirect');
-
-    Route::get('/restaurants/{restaurant}/menus/{menu}/menu-items/create', [MenuItemController::class, 'create'])
-        ->name('restaurants.menus.menu-items.create');
-    Route::post('/restaurants/{restaurant}/menus/{menu}/menu-items', [MenuItemController::class, 'store'])
-        ->name('restaurants.menus.menu-items.store');
-
-    Route::get('/restaurants/{restaurant}/menus/{menu}', [MenuController::class, 'show'])
-        ->name('restaurants.menus.show');
 });
 
 require __DIR__ . '/auth.php';

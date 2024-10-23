@@ -30,7 +30,7 @@ return [
      * If you're using tabuna/breadcrumbs you can use TabunaBreadcrumbsCollector::class
      * If you're using glhd/gretel you can use GretelBreadcrumbsCollector::class (see notes in the readme about using this package)
      */
-    'collector' => GretelBreadcrumbsCollector::class,
+    'collector' => DiglacticBreadcrumbsCollector::class,
 
     /**
      * A classifier to determine if the breadcrumbs should be added to the Inertia response

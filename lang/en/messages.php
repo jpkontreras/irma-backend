@@ -94,4 +94,18 @@ return [
     'view_menu_items' => 'View Menu Items',
     'menu_items_for' => 'Menu Items for :menu',
 
+    // Breadcrumb translations (moved to the main array)
+    'home' => 'Home',
+    'dashboard' => 'Dashboard',
+    'profile' => 'Profile',
+    'restaurants' => 'Restaurants',
+    'create_restaurant' => 'Create Restaurant',
+    'edit_restaurant' => 'Edit Restaurant',
+    'menus' => 'Menus',
+    'create_menu' => 'Create Menu',
+    'edit_menu' => 'Edit Menu',
+    'create_or_redirect_menu' => 'Create or Redirect Menu',
+    'menu_items' => 'Menu Items',
+    'create_menu_item' => 'Create Menu Item',
+    'edit_menu_item' => 'Edit Menu Item',
 ];
