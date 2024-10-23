@@ -12,8 +12,9 @@ use App\Http\Requests\UpdateMenuRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Response as InertiaResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class MenuController extends Controller
 {
@@ -21,9 +22,18 @@ class MenuController extends Controller
         private CreateOrRedirectMenuAction $createOrRedirectMenuAction
     ) {}
 
-    public function index(Restaurant $restaurant): JsonResponse
+    public function index(Restaurant $restaurant): JsonResponse|InertiaResponse
     {
-        return response()->json($restaurant->menus);
+        $menus = $restaurant->menus()->with('menuItems')->paginate();
+
+        if (request()->wantsJson()) {
+            return response()->json($menus);
+        }
+
+        return Inertia::render('Menus/Index', [
+            'restaurant' => $restaurant,
+            'menus' => $menus
+        ]);
     }
 
     public function store(StoreMenuRequest $request, Restaurant $restaurant): JsonResponse
@@ -32,9 +42,28 @@ class MenuController extends Controller
         return response()->json($menu, 201);
     }
 
-    public function show(Restaurant $restaurant, Menu $menu): JsonResponse
+    public function show(Restaurant $restaurant, Menu $menu): InertiaResponse|JsonResponse
     {
-        return response()->json($menu);
+        $menu->load('menuItems');
+
+        $categories = $menu->getCategories();
+        $tags = $menu->getTags();
+
+        if (request()->wantsJson()) {
+            return response()->json([
+                'restaurant' => $restaurant,
+                'menu' => $menu,
+                'categories' => $categories,
+                'tags' => $tags,
+            ]);
+        }
+
+        return Inertia::render('Menus/Show', [
+            'restaurant' => $restaurant,
+            'menu' => $menu,
+            'categories' => $categories,
+            'tags' => $tags,
+        ]);
     }
 
     public function update(UpdateMenuRequest $request, Restaurant $restaurant, Menu $menu): JsonResponse
@@ -49,7 +78,7 @@ class MenuController extends Controller
         return response()->json(null, 204);
     }
 
-    public function create(Restaurant $restaurant): Response
+    public function create(Restaurant $restaurant): InertiaResponse
     {
         return Inertia::render('Menus/Create', [
             'restaurant' => $restaurant,
@@ -62,7 +91,7 @@ class MenuController extends Controller
         return $this->createOrRedirectMenuAction->execute($restaurant, $user);
     }
 
-    public function edit(Restaurant $restaurant, Menu $menu): Response
+    public function edit(Restaurant $restaurant, Menu $menu): InertiaResponse
     {
         $menu->load('menuItems');
 

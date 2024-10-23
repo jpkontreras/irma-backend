@@ -39,6 +39,9 @@ Route::middleware(['auth'])->group(function () {
         ->name('restaurants.menus.menu-items.create');
     Route::post('/restaurants/{restaurant}/menus/{menu}/menu-items', [MenuItemController::class, 'store'])
         ->name('restaurants.menus.menu-items.store');
+
+    Route::get('/restaurants/{restaurant}/menus/{menu}', [MenuController::class, 'show'])
+        ->name('restaurants.menus.show');
 });
 
 require __DIR__.'/auth.php';
