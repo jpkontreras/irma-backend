@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use App\Http\Requests\StoreRestaurantRequest;
 use App\Http\Requests\UpdateRestaurantRequest;
 use App\Http\Resources\RestaurantResource;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Inertia\Inertia;
@@ -16,16 +17,29 @@ use Illuminate\Support\Facades\Auth;
 
 class RestaurantController extends Controller
 {
-    public function index(): AnonymousResourceCollection|InertiaResponse
+    public function index(HttpRequest $request): AnonymousResourceCollection|InertiaResponse
     {
-        $restaurants = Restaurant::ownedByCurrentUser()->paginate();
+        $perPage = (int) $request->input('perPage', 15);
+        $page = (int) $request->input('page', 1);
+        $query = Restaurant::ownedByCurrentUser();
+        $totalCount = $query->count();
+        $maxPage = ceil($totalCount / $perPage);
 
-        if (request()->wantsJson()) {
+        if ($page > $maxPage) {
+            return redirect()->route('restaurants.index', [
+                'perPage' => $perPage,
+                'page' => 1,
+            ]);
+        }
+
+        $restaurants = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
+
+        if ($request->wantsJson()) {
             return RestaurantResource::collection($restaurants);
         }
 
         return Inertia::render('Restaurants/Index', [
-            'restaurants' => $restaurants
+            'restaurants' => $restaurants,
         ]);
     }
 

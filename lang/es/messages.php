@@ -129,4 +129,5 @@ return [
 
     'address' => 'Dirección',
     'phone' => 'Número de Teléfono',
+    'per_page' => 'Por Página',
 ];

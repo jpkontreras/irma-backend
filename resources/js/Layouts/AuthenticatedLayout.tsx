@@ -36,7 +36,6 @@ import {
   UserIcon,
 } from 'lucide-react';
 import { PropsWithChildren, ReactNode } from 'react';
-
 export default function Authenticated({
   header,
   children,

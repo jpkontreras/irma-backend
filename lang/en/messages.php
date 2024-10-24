@@ -111,4 +111,5 @@ return [
 
     'address' => 'Address',
     'phone' => 'Phone Number',
+    'per_page' => 'Per Page',
 ];
