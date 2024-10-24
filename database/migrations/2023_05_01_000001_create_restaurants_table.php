@@ -16,9 +16,12 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('logo')->nullable();
             $table->foreignId('user_id')
-                  ->constrained()
-                  ->onDelete('cascade');
+                ->constrained()
+                ->onDelete('cascade');
             $table->timestamps();
+
+            // Add the unique constraint for name and user_id
+            $table->unique(['name', 'user_id']);
         });
     }
 

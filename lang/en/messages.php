@@ -108,4 +108,7 @@ return [
     'menu_items' => 'Menu Items',
     'create_menu_item' => 'Create Menu Item',
     'edit_menu_item' => 'Edit Menu Item',
+
+    'address' => 'Address',
+    'phone' => 'Phone Number',
 ];

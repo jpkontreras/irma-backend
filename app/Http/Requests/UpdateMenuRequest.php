@@ -6,6 +6,7 @@ namespace App\Http\Requests;
 
 use App\Models\Menu;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateMenuRequest extends FormRequest
 {
@@ -17,9 +18,15 @@ class UpdateMenuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
-            'type' => 'sometimes|required|integer|in:' . implode(',', [Menu::REGULAR, Menu::OCR, Menu::TEMPLATE]),
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('menus')->where(function ($query) {
+                    return $query->where('restaurant_id', $this->route('restaurant')->id);
+                })->ignore($this->route('menu')),
+            ],
+            'description' => 'nullable|string',
         ];
     }
 }

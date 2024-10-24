@@ -28,7 +28,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    // Nested resources for restaurants, menus, and menu items
     Route::resource('restaurants', RestaurantController::class);
     Route::resource('restaurants.menus', MenuController::class);
     Route::resource('restaurants.menus.menu-items', MenuItemController::class);

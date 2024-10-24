@@ -15,58 +15,47 @@ interface Props extends PageProps {
     id: number;
     name: string;
   };
-  menu: {
-    id: number;
-    name: string;
-    description: string;
-  };
 }
 
-export default function Edit({ auth, restaurant, menu }: Props) {
+export default function Create({ auth, restaurant }: Props) {
   const { toast } = useToast();
-  const { data, setData, put, processing, errors } = useForm({
-    name: menu.name,
-    description: menu.description,
+  const { data, setData, post, processing, errors } = useForm({
+    name: '',
+    description: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    put(
-      route('restaurants.menus.update', {
-        restaurant: restaurant.id,
-        menu: menu.id,
-      }),
-      {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: () => {
-          toast({
-            title: __('messages.success'),
-            description: __('messages.menu_updated'),
-            duration: 3000,
-          });
-        },
-        onError: () => {
-          toast({
-            title: __('messages.error'),
-            description: __('messages.menu_update_failed'),
-            variant: 'destructive',
-            duration: 3000,
-          });
-        },
+    post(route('restaurants.menus.store', restaurant.id), {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: () => {
+        toast({
+          title: __('messages.success'),
+          description: __('messages.menu_created'),
+          duration: 3000,
+        });
       },
-    );
+      onError: () => {
+        toast({
+          title: __('messages.error'),
+          description: __('messages.menu_creation_failed'),
+          variant: 'destructive',
+          duration: 3000,
+        });
+      },
+    });
   };
 
   return (
     <AuthenticatedLayout
       header={
         <h2 className="text-xl font-semibold leading-tight text-gray-800">
-          {__('messages.edit_menu_for', { restaurant: restaurant.name })}
+          {__('messages.add_menu_for', { restaurant: restaurant.name })}
         </h2>
       }
     >
-      <Head title={__('messages.edit_menu')} />
+      <Head title={__('messages.add_menu')} />
 
       <div className="py-12">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -107,7 +96,7 @@ export default function Edit({ auth, restaurant, menu }: Props) {
                 </div>
 
                 <Button type="submit" disabled={processing}>
-                  {__('messages.update_menu')}
+                  {__('messages.create_menu')}
                 </Button>
               </form>
             </CardContent>

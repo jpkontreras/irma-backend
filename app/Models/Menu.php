@@ -30,6 +30,7 @@ class Menu extends Model
     public const REGULAR = 1;
     public const OCR = 2;
     public const TEMPLATE = 3;
+    public const Regular = 'regular';
 
     public function restaurant(): BelongsTo
     {

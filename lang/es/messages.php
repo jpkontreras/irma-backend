@@ -126,4 +126,7 @@ return [
     'menu_items' => 'Elementos del Menú',
     'create_menu_item' => 'Crear Elemento del Menú',
     'edit_menu_item' => 'Editar Elemento del Menú',
+
+    'address' => 'Dirección',
+    'phone' => 'Número de Teléfono',
 ];

@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { PageProps } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
@@ -75,11 +76,11 @@ export default function Edit({ auth, restaurant }: Props) {
                   <Label htmlFor="description">
                     {__('messages.description')}
                   </Label>
-                  <Input
+                  <Textarea
                     id="description"
-                    type="text"
                     value={data.description}
                     onChange={(e) => setData('description', e.target.value)}
+                    rows={4}
                   />
                   {errors.description && (
                     <div className="text-red-500">{errors.description}</div>

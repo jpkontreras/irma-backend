@@ -36,10 +36,15 @@ class MenuController extends Controller
         ]);
     }
 
-    public function store(StoreMenuRequest $request, Restaurant $restaurant): JsonResponse
+    public function store(StoreMenuRequest $request, Restaurant $restaurant): RedirectResponse
     {
-        $menu = $restaurant->menus()->create($request->validated());
-        return response()->json($menu, 201);
+        $validated = $request->validated();
+        $validated['type'] = Menu::REGULAR;
+
+        $menu = $restaurant->menus()->create($validated);
+
+        return redirect()->route('restaurants.menus.show', [$restaurant, $menu])
+            ->with('success', __('messages.menu_created'));
     }
 
     public function show(Restaurant $restaurant, Menu $menu): InertiaResponse|JsonResponse
@@ -66,10 +71,11 @@ class MenuController extends Controller
         ]);
     }
 
-    public function update(UpdateMenuRequest $request, Restaurant $restaurant, Menu $menu)
+    public function update(UpdateMenuRequest $request, Restaurant $restaurant, Menu $menu): RedirectResponse
     {
         $menu->update($request->validated());
-        return redirect()->route('restaurants.menus.show', ['restaurant' => $restaurant, 'menu' => $menu])
+
+        return redirect()->route('restaurants.menus.show', [$restaurant, $menu])
             ->with('success', __('messages.menu_updated'));
     }
 
@@ -79,10 +85,10 @@ class MenuController extends Controller
         return response()->json(null, 204);
     }
 
-    public function create(Restaurant $restaurant): InertiaResponse
+    public function create(Restaurant $restaurant)
     {
         return Inertia::render('Menus/Create', [
-            'restaurant' => $restaurant,
+            'restaurant' => $restaurant
         ]);
     }
 
@@ -92,13 +98,11 @@ class MenuController extends Controller
         return $this->createOrRedirectMenuAction->execute($restaurant, $user);
     }
 
-    public function edit(Restaurant $restaurant, Menu $menu): InertiaResponse
+    public function edit(Restaurant $restaurant, Menu $menu)
     {
-        $menu->load('menuItems');
-
         return Inertia::render('Menus/Edit', [
             'restaurant' => $restaurant,
-            'menu' => $menu,
+            'menu' => $menu
         ]);
     }
 }

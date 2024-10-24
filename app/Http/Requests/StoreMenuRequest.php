@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Models\Menu;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMenuRequest extends FormRequest
 {
@@ -17,9 +17,15 @@ class StoreMenuRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'type' => 'required|integer|in:' . implode(',', [Menu::REGULAR, Menu::OCR, Menu::TEMPLATE]),
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('menus')->where(function ($query) {
+                    return $query->where('restaurant_id', $this->route('restaurant')->id);
+                }),
+            ],
+            'description' => 'nullable|string',
         ];
     }
 }

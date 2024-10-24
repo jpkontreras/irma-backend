@@ -29,10 +29,31 @@ class RestaurantController extends Controller
         ]);
     }
 
+    /**
+     * Show the form for creating a new restaurant.
+     *
+     * @return \Inertia\Response
+     */
+    public function create()
+    {
+        return Inertia::render('Restaurants/Create');
+    }
+
+    /**
+     * Store a newly created restaurant in storage.
+     *
+     * @param  \App\Http\Requests\StoreRestaurantRequest  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreRestaurantRequest $request)
     {
-        $restaurant = Auth::user()->restaurants()->create($request->validated());
-        return response()->json($restaurant, 201);
+        $validated = $request->validated();
+        $validated['user_id'] = Auth::id();
+
+        $restaurant = Restaurant::create($validated);
+
+        return redirect()->route('restaurants.show', $restaurant)
+            ->with('success', __('messages.restaurant_created'));
     }
 
     public function show(Restaurant $restaurant): RestaurantResource|InertiaResponse
