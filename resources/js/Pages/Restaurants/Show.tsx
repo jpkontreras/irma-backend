@@ -1,3 +1,4 @@
+import Reveal from '@/Components/Reveal';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,8 +43,8 @@ export default function Show({ auth, restaurant }: Props) {
           </CardHeader>
           <CardContent>
             <p className="mb-1 text-lg font-bold">{restaurant.name}</p>
-            <p className="mb-4">{restaurant.description}</p>
-            <div className="flex space-x-4">
+            <Reveal text={restaurant.description} lineClamp={3} />
+            <div className="mt-4 flex space-x-4">
               <Link href={route('restaurants.menus.index', restaurant.id)}>
                 <Button>{__('messages.view_menus')}</Button>
               </Link>

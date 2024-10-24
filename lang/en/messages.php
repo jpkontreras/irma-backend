@@ -112,4 +112,6 @@ return [
     'address' => 'Address',
     'phone' => 'Phone Number',
     'per_page' => 'Per Page',
+    'see_more' => 'See More',
+    'see_less' => 'See Less',
 ];

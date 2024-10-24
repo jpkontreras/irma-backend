@@ -130,4 +130,6 @@ return [
     'address' => 'Dirección',
     'phone' => 'Número de Teléfono',
     'per_page' => 'Por Página',
+    'see_more' => 'Ver más',
+    'see_less' => 'Ver menos',
 ];
