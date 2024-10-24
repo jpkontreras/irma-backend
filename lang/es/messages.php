@@ -132,4 +132,14 @@ return [
     'per_page' => 'Por Página',
     'see_more' => 'Ver más',
     'see_less' => 'Ver menos',
+
+    // Append these new translations
+    'no_prices_available' => 'No hay precios disponibles',
+    'menu_item_image' => 'Imagen del elemento del menú :number',
+    'no_images_available' => 'No hay imágenes disponibles para este menú',
+
+    // Add these new translations
+    'add_first_menu_item' => 'Agregar Tu Primer Elemento de Menú',
+    'previous' => 'Anterior',
+    'next' => 'Siguiente',
 ];

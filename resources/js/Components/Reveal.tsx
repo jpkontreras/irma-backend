@@ -2,7 +2,7 @@ import { __ } from 'laravel-translator';
 import { useState } from 'react';
 
 interface RevealProps {
-  text?: string; // Make text optional
+  text?: string | null; // Make text optional and allow null
   lineClamp: number;
 }
 
@@ -13,7 +13,10 @@ const Reveal: React.FC<RevealProps> = ({ text = '', lineClamp }) => {
     setIsExpanded(!isExpanded);
   };
 
-  const shouldShowExpand = text.split(' ').length > lineClamp * 10; // Rough estimate of words per line
+  // Add null check before calling split
+  const shouldShowExpand = text
+    ? text.split(' ').length > lineClamp * 10
+    : false;
 
   return (
     <div>
@@ -21,7 +24,7 @@ const Reveal: React.FC<RevealProps> = ({ text = '', lineClamp }) => {
         className={`cursor-pointer ${!isExpanded ? `line-clamp-${lineClamp}` : ''}`}
         onClick={toggleExpand}
       >
-        {text}
+        {text || ''} {/* Use empty string if text is null */}
       </div>
       {shouldShowExpand && (
         <span className="text-blue-500 hover:underline" onClick={toggleExpand}>

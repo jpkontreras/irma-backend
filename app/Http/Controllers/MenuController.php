@@ -15,6 +15,7 @@ use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
@@ -22,11 +23,25 @@ class MenuController extends Controller
         private CreateOrRedirectMenuAction $createOrRedirectMenuAction
     ) {}
 
-    public function index(Restaurant $restaurant): JsonResponse|InertiaResponse
+    public function index(Request $request, Restaurant $restaurant): JsonResponse|InertiaResponse
     {
-        $menus = $restaurant->menus()->with('menuItems')->paginate();
+        $perPage = (int) $request->input('perPage', 15);
+        $page = (int) $request->input('page', 1);
+        $query = $restaurant->menus()->with('menuItems');
+        $totalCount = $query->count();
+        $maxPage = ceil($totalCount / $perPage);
 
-        if (request()->wantsJson()) {
+        if ($page > $maxPage) {
+            return redirect()->route('restaurants.menus.index', [
+                'restaurant' => $restaurant->id,
+                'perPage' => $perPage,
+                'page' => 1,
+            ]);
+        }
+
+        $menus = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
+
+        if ($request->wantsJson()) {
             return response()->json($menus);
         }
 

@@ -44,12 +44,13 @@ export default function Show({
     .filter((item) => item.image_url)
     .map((item) => item.image_url || '');
 
-  const prices = menu.menu_items.map((item) =>
-    parseFloat(item.price.toString()),
-  );
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
-  const medianPrice = calculateMedian(prices);
+  const prices = menu.menu_items
+    .map((item) => parseFloat(item.price.toString()))
+    .filter((price) => !isNaN(price) && isFinite(price));
+
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+  const medianPrice = prices.length > 0 ? calculateMedian(prices) : 0;
 
   return (
     <AuthenticatedLayout
@@ -103,7 +104,7 @@ export default function Show({
             <CardTitle>{__('messages.category_and_tags_overview')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <h3 className="mb-2 font-semibold">{__('messages.categories')}:</h3>
+            <h3 className="mb-1 font-semibold">{__('messages.categories')}:</h3>
             {categories.length > 0 ? (
               <ul className="mb-4 list-inside list-disc">
                 {categories.map((category) => (
@@ -111,9 +112,9 @@ export default function Show({
                 ))}
               </ul>
             ) : (
-              <p>{__('messages.no_categories')}</p>
+              <p className="mb-2">{__('messages.no_categories')}</p>
             )}
-            <h3 className="mb-2 font-semibold">{__('messages.tags')}:</h3>
+            <h3 className="mb-1 font-semibold">{__('messages.tags')}:</h3>
             {tags.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
@@ -126,7 +127,7 @@ export default function Show({
                 ))}
               </div>
             ) : (
-              <p>{__('messages.no_tags')}</p>
+              <p className="mb-2">{__('messages.no_tags')}</p>
             )}
           </CardContent>
         </Card>
@@ -136,16 +137,20 @@ export default function Show({
             <CardTitle>{__('messages.visual_elements')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={__('messages.menu_item_image', { number: index + 1 })}
-                  className="h-32 w-full rounded object-cover"
-                />
-              ))}
-            </div>
+            {images.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={__('messages.menu_item_image', { number: index + 1 })}
+                    className="h-32 w-full rounded object-cover"
+                  />
+                ))}
+              </div>
+            ) : (
+              <p>{__('messages.no_images_available')}</p>
+            )}
           </CardContent>
         </Card>
 
@@ -154,15 +159,21 @@ export default function Show({
             <CardTitle>{__('messages.pricing_ranges')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>
-              {__('messages.min_price')}: ${minPrice.toFixed(0)}
-            </p>
-            <p>
-              {__('messages.max_price')}: ${maxPrice.toFixed(0)}
-            </p>
-            <p>
-              {__('messages.median_price')}: ${medianPrice.toFixed(0)}
-            </p>
+            {prices.length > 0 ? (
+              <>
+                <p>
+                  {__('messages.min_price')}: ${minPrice.toFixed(2)}
+                </p>
+                <p>
+                  {__('messages.max_price')}: ${maxPrice.toFixed(2)}
+                </p>
+                <p>
+                  {__('messages.median_price')}: ${medianPrice.toFixed(2)}
+                </p>
+              </>
+            ) : (
+              <p>{__('messages.no_prices_available')}</p>
+            )}
           </CardContent>
         </Card>
       </div>

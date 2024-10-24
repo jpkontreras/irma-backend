@@ -1,6 +1,28 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -11,7 +33,7 @@ import {
 } from '@/components/ui/table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
 import {
   Beef,
@@ -28,7 +50,7 @@ import {
   Table2,
   Tag,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface MenuItem {
   id: number;
@@ -70,9 +92,55 @@ const icons: Record<string, React.ReactNode> = {
 }
 
 export default function Index({ auth, restaurant, menu, menuItems }: Props) {
-  console.log({ restaurant, menu, menuItems });
+  const { url } = usePage();
+  const [view, setView] = useState<'grid' | 'table'>(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return (urlParams.get('view') as 'grid' | 'table') || 'grid';
+  });
 
-  const [view, setView] = useState<'grid' | 'table'>('grid');
+  const updateQueryString = (newView: 'grid' | 'table') => {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('view', newView);
+    return urlParams.toString();
+  };
+
+  const handleViewChange = (newView: 'grid' | 'table') => {
+    setView(newView);
+    const newUrl = `${url.split('?')[0]}?${updateQueryString(newView)}`;
+    router.get(
+      newUrl,
+      {},
+      {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+      },
+    );
+  };
+
+  const handlePerPageChange = (value: string) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('perPage', value);
+    urlParams.set('view', view);
+    urlParams.set('page', '1'); // Always reset to page 1 when changing perPage
+    const newUrl = `${url.split('?')[0]}?${urlParams.toString()}`;
+    router.get(
+      newUrl,
+      {},
+      {
+        preserveState: true,
+        preserveScroll: true,
+      },
+    );
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlView = urlParams.get('view') as 'grid' | 'table';
+    if (urlView && urlView !== view) {
+      setView(urlView);
+    }
+  }, []);
 
   return (
     <AuthenticatedLayout
@@ -91,7 +159,7 @@ export default function Index({ auth, restaurant, menu, menuItems }: Props) {
               <div className="space-x-2">
                 <Button
                   variant={view === 'grid' ? 'default' : 'outline'}
-                  onClick={() => setView('grid')}
+                  onClick={() => handleViewChange('grid')}
                   size="sm"
                 >
                   <Grid className="mr-2 h-4 w-4" />
@@ -99,7 +167,7 @@ export default function Index({ auth, restaurant, menu, menuItems }: Props) {
                 </Button>
                 <Button
                   variant={view === 'table' ? 'default' : 'outline'}
-                  onClick={() => setView('table')}
+                  onClick={() => handleViewChange('table')}
                   size="sm"
                 >
                   <Table2 className="mr-2 h-4 w-4" />
@@ -120,7 +188,24 @@ export default function Index({ auth, restaurant, menu, menuItems }: Props) {
             </div>
           </CardHeader>
           <CardContent>
-            {view === 'grid' ? (
+            {menuItems.data.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <p className="mb-4 text-lg text-gray-600">
+                  {__('messages.no_menu_items')}
+                </p>
+                <Link
+                  href={route('restaurants.menus.menu-items.create', {
+                    restaurant: restaurant.id,
+                    menu: menu.id,
+                  })}
+                >
+                  <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    {__('messages.add_first_menu_item')}
+                  </Button>
+                </Link>
+              </div>
+            ) : view === 'grid' ? (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {menuItems.data.map((item) => (
                   <Card key={item.id} className="overflow-hidden">
@@ -224,27 +309,77 @@ export default function Index({ auth, restaurant, menu, menuItems }: Props) {
                 </TableBody>
               </Table>
             )}
-
-            {/* Pagination links */}
-            <div className="mt-6 flex justify-center">
-              <nav className="inline-flex rounded-md shadow">
-                {menuItems.links.map((link, index) => (
-                  <Link
-                    key={index}
-                    href={link.url || '#'}
-                    className={`px-4 py-2 text-sm font-medium ${
-                      link.active
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white text-blue-500 hover:bg-blue-50'
-                    } ${index === 0 ? 'rounded-l-md' : ''} ${
-                      index === menuItems.links.length - 1 ? 'rounded-r-md' : ''
-                    }`}
-                    dangerouslySetInnerHTML={{ __html: link.label }}
-                  />
-                ))}
-              </nav>
-            </div>
           </CardContent>
+
+          <CardFooter className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div className="flex items-center space-x-2 whitespace-nowrap">
+              <span className="text-sm text-gray-700">
+                {__('messages.per_page')}:
+              </span>
+              <Select
+                value={menuItems.per_page?.toString() || '15'}
+                onValueChange={handlePerPageChange}
+              >
+                <SelectTrigger className="w-[70px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 10, 15, 30, 50, 100].map((value) => (
+                    <SelectItem key={value} value={value.toString()}>
+                      {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href={menuItems.links[0].url || '#'}
+                    className={
+                      !menuItems.links[0].url
+                        ? 'pointer-events-none opacity-50'
+                        : ''
+                    }
+                  >
+                    {__('messages.previous')}
+                  </PaginationPrevious>
+                </PaginationItem>
+                {menuItems.links.slice(1, -1).map((link, index) => {
+                  if (link.url === null) {
+                    return (
+                      <PaginationItem key={index}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    );
+                  }
+                  return (
+                    <PaginationItem key={index}>
+                      <PaginationLink href={link.url} isActive={link.active}>
+                        {link.label}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                })}
+                <PaginationItem>
+                  <PaginationNext
+                    href={
+                      menuItems.links[menuItems.links.length - 1].url || '#'
+                    }
+                    className={
+                      !menuItems.links[menuItems.links.length - 1].url
+                        ? 'pointer-events-none opacity-50'
+                        : ''
+                    }
+                  >
+                    {__('messages.next')}
+                  </PaginationNext>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </CardFooter>
         </Card>
       </div>
     </AuthenticatedLayout>

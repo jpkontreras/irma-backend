@@ -1,7 +1,13 @@
 import Reveal from '@/Components/Reveal';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
@@ -70,35 +76,40 @@ export default function Show({ auth, restaurant }: Props) {
             {restaurant.menus && restaurant.menus.length > 0 ? (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {restaurant.menus.map((menu) => (
-                  <Card key={menu.id}>
-                    <CardHeader>
-                      <CardTitle>{menu.name}</CardTitle>
+                  <Card key={menu.id} className="flex h-[200px] flex-col">
+                    <CardHeader className="flex-shrink-0 py-4">
+                      <CardTitle className="line-clamp-1 overflow-hidden text-ellipsis">
+                        {menu.name}
+                      </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <p className="mb-4">{menu.description}</p>
-                      <div className="flex space-x-2">
-                        <Link
-                          href={route('restaurants.menus.show', [
-                            restaurant.id,
-                            menu.id,
-                          ])}
-                        >
-                          <Button variant="outline" size="sm">
-                            {__('messages.view_details')}
-                          </Button>
-                        </Link>
-                        <Link
-                          href={route('restaurants.menus.menu-items.index', [
-                            restaurant.id,
-                            menu.id,
-                          ])}
-                        >
-                          <Button size="sm">
-                            {__('messages.view_menu_items')}
-                          </Button>
-                        </Link>
-                      </div>
+                    <CardContent className="flex-grow overflow-hidden">
+                      <p className="line-clamp-2 overflow-hidden text-ellipsis">
+                        {menu.description}
+                      </p>
                     </CardContent>
+
+                    <CardFooter className="flex-shrink-0 justify-end space-x-2 py-4">
+                      <Link
+                        href={route('restaurants.menus.show', [
+                          restaurant.id,
+                          menu.id,
+                        ])}
+                      >
+                        <Button variant="outline" size="sm">
+                          {__('messages.view_details')}
+                        </Button>
+                      </Link>
+                      <Link
+                        href={route('restaurants.menus.menu-items.index', [
+                          restaurant.id,
+                          menu.id,
+                        ])}
+                      >
+                        <Button size="sm">
+                          {__('messages.view_menu_items')}
+                        </Button>
+                      </Link>
+                    </CardFooter>
                   </Card>
                 ))}
               </div>

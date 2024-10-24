@@ -114,4 +114,14 @@ return [
     'per_page' => 'Per Page',
     'see_more' => 'See More',
     'see_less' => 'See Less',
+
+    // Append these new translations
+    'no_prices_available' => 'No prices available',
+    'menu_item_image' => 'Menu Item Image :number',
+    'no_images_available' => 'No images available for this menu',
+
+    // Add these new translations
+    'add_first_menu_item' => 'Add Your First Menu Item',
+    'previous' => 'Previous',
+    'next' => 'Next',
 ];
