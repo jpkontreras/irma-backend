@@ -124,4 +124,7 @@ return [
     'add_first_menu_item' => 'Add Your First Menu Item',
     'previous' => 'Previous',
     'next' => 'Next',
+
+    // Add this line to the existing array
+    'no_suggestions_found' => 'No suggestions found',
 ];

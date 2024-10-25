@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SuggestionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,5 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/restaurants/{restaurant}/menus/create-or-redirect', [MenuController::class, 'createOrRedirect'])
         ->name('restaurants.menus.create-or-redirect');
 });
+
+Route::get('/suggestions', SuggestionController::class)->name('suggestions.fetch');
 
 require __DIR__ . '/auth.php';

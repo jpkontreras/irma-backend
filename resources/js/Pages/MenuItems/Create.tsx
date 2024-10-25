@@ -1,3 +1,4 @@
+import SuggestionBox from '@/Components/SuggestionBox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -24,6 +25,7 @@ import {
   Shell,
 } from 'lucide-react';
 import * as React from 'react';
+import { useState } from 'react';
 
 type Category = {
   id: string;
@@ -49,13 +51,8 @@ interface Props extends PageProps {
   };
   categories: Category[];
   tags: Tag[];
-  createdMenuItem?: {
-    id: number;
-    name: string;
-    description: string;
-    price: string;
-    category_ids: string[];
-    tag_ids: string[];
+  flash?: {
+    success?: string;
   };
 }
 
@@ -77,7 +74,7 @@ export default function Create() {
     menu,
     categories = [],
     tags = [],
-    createdMenuItem,
+    flash,
   } = usePage<Props>().props;
   const { toast } = useToast();
 
@@ -89,16 +86,7 @@ export default function Create() {
     tag_ids: [] as string[],
   });
 
-  React.useEffect(() => {
-    if (createdMenuItem) {
-      toast({
-        title: __('messages.success'),
-        description: __('messages.menu_item_created'),
-        duration: 3000,
-      });
-      reset('name', 'description', 'price', 'category_ids', 'tag_ids');
-    }
-  }, [createdMenuItem]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,14 +96,22 @@ export default function Create() {
         menu: menu.id,
       }),
       {
-        preserveState: true,
-        preserveScroll: true,
-        onError: () => {
+        onSuccess: () => {
           toast({
-            title: __('messages.error'),
-            description: __('messages.menu_item_creation_failed'),
-            variant: 'destructive',
+            title: __('messages.success'),
+            description: __('messages.menu_item_created'),
             duration: 3000,
+          });
+          reset('name', 'price');
+        },
+        onError: (errors) => {
+          Object.keys(errors).forEach((key) => {
+            toast({
+              title: __('messages.error'),
+              description: errors[key],
+              variant: 'destructive',
+              duration: 5000,
+            });
           });
         },
       },
@@ -138,6 +134,10 @@ export default function Create() {
 
   const parentCategories = categories.filter((category) => !category.parent_id);
 
+  const handleNameChange = (value: string) => {
+    setData('name', value);
+  };
+
   return (
     <AuthenticatedLayout
       header={
@@ -153,13 +153,11 @@ export default function Create() {
           <div className="p-6 text-gray-900">
             <form onSubmit={handleSubmit}>
               <div className="mb-4 flex items-end space-x-4">
-                <div className="flex-grow">
+                <div className="relative flex-grow">
                   <Label htmlFor="name">{__('messages.item_name')} *</Label>
-                  <Input
-                    id="name"
-                    value={data.name}
-                    onChange={(e) => setData('name', e.target.value)}
-                    required
+                  <SuggestionBox
+                    query={data.name}
+                    onSelect={handleNameChange}
                   />
                   {errors.name && (
                     <Alert variant="destructive">
@@ -183,7 +181,12 @@ export default function Create() {
                     </Alert>
                   )}
                 </div>
-                <Button type="submit" size="icon" className="mb-1">
+                <Button
+                  type="submit"
+                  size="icon"
+                  className="mb-1"
+                  disabled={processing}
+                >
                   <PlusCircle className="h-4 w-4" />
                 </Button>
               </div>

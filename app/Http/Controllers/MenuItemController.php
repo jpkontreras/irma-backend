@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 
 class MenuItemController extends Controller
 {
@@ -46,26 +47,24 @@ class MenuItemController extends Controller
         ]);
     }
 
-    public function store(StoreMenuItemRequest $request, Restaurant $restaurant, Menu $menu): Response
+    public function store(Request $request, Restaurant $restaurant, Menu $menu, AddMenuItemAction $action)
     {
-        try {
-            $menuItem = $this->addMenuItemAction->execute($menu, $request->validated());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'category_ids' => 'nullable|array',
+            'category_ids.*' => 'exists:labels,id',
+            'tag_ids' => 'nullable|array',
+            'tag_ids.*' => 'exists:labels,id',
+        ]);
 
-            return Inertia::render('MenuItems/Create', [
-                'restaurant' => $restaurant,
-                'menu' => $menu,
-                'categories' => Label::categories()->get(),
-                'tags' => Label::tags()->get(),
-                'createdMenuItem' => $menuItem, // Send the created menu item back to the client
-            ]);
-        } catch (\Exception $e) {
-            return Inertia::render('MenuItems/Create', [
-                'restaurant' => $restaurant,
-                'menu' => $menu,
-                'categories' => Label::categories()->get(),
-                'tags' => Label::tags()->get(),
-            ])->withException($e);
-        }
+        $menuItem = $action->execute($menu, $validated);
+
+        return redirect()->route('restaurants.menus.menu-items.create', [
+            'restaurant' => $restaurant->id,
+            'menu' => $menu->id,
+        ])->with('success', 'Menu item created successfully.');
     }
 
     public function show(Restaurant $restaurant, Menu $menu, MenuItem $menuItem): View

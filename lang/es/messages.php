@@ -142,4 +142,5 @@ return [
     'add_first_menu_item' => 'Agregar Tu Primer Elemento de Menú',
     'previous' => 'Anterior',
     'next' => 'Siguiente',
+    'no_suggestions_found' => 'No se encontraron sugerencias',
 ];
