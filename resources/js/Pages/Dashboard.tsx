@@ -3,44 +3,49 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
 import {
   Book,
   CameraIcon,
   ChevronDown,
   Clock,
-  Edit,
   PlusCircle,
   ScanText,
 } from 'lucide-react';
 
-interface Restaurant {
-  id: number;
-  name: string;
+interface Props extends PageProps {
+  hasMenu: boolean;
+  latestMenuId: number | null;
+  restaurantId: number | null;
 }
 
-interface Menu {
-  id: number;
-  name: string;
-}
-
-interface Props {
-  restaurant?: Restaurant;
-  menu?: Menu;
-}
-
-export default function Dashboard() {
-  const { props } = usePage<PageProps & Props>();
-  const { restaurant, menu } = props;
+export default function Dashboard({
+  hasMenu,
+  latestMenuId,
+  restaurantId,
+}: Props) {
   const { post, processing } = useForm();
 
-  const handleCreateOrEditMenu = () => {
-    post(
-      route('restaurants.menus.create-or-redirect', {
-        restaurant: restaurant?.id,
-      }),
-    );
+  const handleMenuAction = () => {
+    if (hasMenu && latestMenuId && restaurantId) {
+      // Redirect to the latest menu's items index
+      window.location.href = route('restaurants.menus.menu-items.index', {
+        restaurant: restaurantId,
+        menu: latestMenuId,
+      });
+    } else if (restaurantId) {
+      // Use CreateOrRedirectMenuAction to create a new menu or redirect
+      post(
+        route('restaurants.menus.create-or-redirect', {
+          restaurant: restaurantId,
+        }),
+      );
+    } else {
+      // Handle the case where there's no restaurant
+      console.error('No restaurant available');
+      // You might want to redirect to a page to create a restaurant or show an error message
+    }
   };
 
   return (
@@ -93,29 +98,29 @@ export default function Dashboard() {
                 <Card className="flex flex-col border-2 border-orange-200">
                   <CardHeader>
                     <CardTitle className="text-2xl font-bold text-orange-800">
-                      {menu
-                        ? __('messages.edit_menu')
+                      {hasMenu
+                        ? __('messages.your_menu')
                         : __('messages.create_menu')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex flex-grow flex-col">
                     <p className="mb-4 flex-grow text-sm text-gray-600">
-                      {menu
-                        ? __('messages.continue_editing_menu')
+                      {hasMenu
+                        ? __('messages.manage_your_existing_menu')
                         : __('messages.culinary_creativity_shine')}
                     </p>
                     <Button
                       className="mt-auto w-full bg-orange-500 text-white hover:bg-orange-600"
-                      onClick={handleCreateOrEditMenu}
+                      onClick={handleMenuAction}
                       disabled={processing}
                     >
-                      {menu ? (
-                        <Edit className="mr-2 h-4 w-4" />
+                      {hasMenu ? (
+                        <Book className="mr-2 h-4 w-4" />
                       ) : (
                         <PlusCircle className="mr-2 h-4 w-4" />
                       )}
-                      {menu
-                        ? __('messages.continue_editing_menu')
+                      {hasMenu
+                        ? __('messages.go_to_your_menu')
                         : __('messages.start_creating_menu')}
                     </Button>
                   </CardContent>

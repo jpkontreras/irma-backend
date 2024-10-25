@@ -143,4 +143,9 @@ return [
     'previous' => 'Anterior',
     'next' => 'Siguiente',
     'no_suggestions_found' => 'No se encontraron sugerencias',
+
+    // Add these new translations
+    'your_menu' => 'Tu Menú',
+    'manage_your_existing_menu' => 'Administra tu menú existente y realiza actualizaciones según sea necesario.',
+    'go_to_your_menu' => 'Ir a Tu Menú',
 ];

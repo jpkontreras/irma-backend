@@ -127,4 +127,9 @@ return [
 
     // Add this line to the existing array
     'no_suggestions_found' => 'No suggestions found',
+
+    // Add these new translations
+    'your_menu' => 'Your Menu',
+    'manage_your_existing_menu' => 'Manage your existing menu and make updates as needed.',
+    'go_to_your_menu' => 'Go to Your Menu',
 ];

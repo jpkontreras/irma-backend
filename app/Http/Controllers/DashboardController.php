@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Menu;
+use App\Models\Restaurant;
 
 class DashboardController extends Controller
 {
@@ -12,10 +14,22 @@ class DashboardController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $restaurant = $request->user()->restaurants()->first();
+        $user = $request->user();
+        $restaurant = $user->restaurants()->first();
+        $hasMenu = false;
+        $latestMenu = null;
+        $restaurantId = null;
+
+        if ($restaurant) {
+            $restaurantId = $restaurant->id;
+            $latestMenu = $restaurant->menus()->where('type', Menu::REGULAR)->latest()->first();
+            $hasMenu = $latestMenu !== null;
+        }
 
         return Inertia::render('Dashboard', [
-            'restaurant' => $restaurant
+            'hasMenu' => $hasMenu,
+            'latestMenuId' => $latestMenu ? $latestMenu->id : null,
+            'restaurantId' => $restaurantId,
         ]);
     }
 }
