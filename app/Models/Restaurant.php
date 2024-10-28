@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class Restaurant extends Model
 {
@@ -51,7 +52,7 @@ class Restaurant extends Model
      */
     public static function ownedByCurrentUser(): Builder
     {
-        return static::ownedBy(auth()->user());
+        return static::ownedBy(Auth::user());
     }
 
     public function menus(): HasMany
@@ -66,6 +67,6 @@ class Restaurant extends Model
 
     public function scopeOwnedByCurrentUser($query)
     {
-        return $query->where('user_id', auth()->id());
+        return $query->where('user_id', Auth::id());
     }
 }

@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
 import { PageProps } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Restaurant {
   id: number;
@@ -20,10 +21,13 @@ interface Props extends PageProps {
 }
 
 export default function Edit({ auth, restaurant }: Props) {
-  const { data, setData, put, processing, errors, reset } = useForm({
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { data, setData, post, processing, errors, reset } = useForm({
     name: restaurant.name,
     description: restaurant.description,
-    logo: restaurant.logo,
+    logo: null as File | null,
+    _method: 'PUT',
   });
 
   useEffect(() => {
@@ -34,13 +38,45 @@ export default function Edit({ auth, restaurant }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    put(route('restaurants.update', restaurant.id), {
+    post(route('restaurants.update', restaurant.id), {
       preserveState: true,
       preserveScroll: true,
       onSuccess: () => {
+        toast({
+          title: __('messages.success'),
+          description: __('messages.restaurant_updated'),
+          duration: 3000,
+        });
         router.visit(route('restaurants.show', restaurant.id));
       },
+      onError: () => {
+        toast({
+          title: __('messages.error'),
+          description: __('messages.restaurant_update_failed'),
+          variant: 'destructive',
+          duration: 3000,
+        });
+      },
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: __('messages.error'),
+          description: __('messages.logo_size_error'),
+          variant: 'destructive',
+          duration: 3000,
+        });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
+      setData('logo', file);
+    }
   };
 
   return (
@@ -91,12 +127,22 @@ export default function Edit({ auth, restaurant }: Props) {
                   <Label htmlFor="logo">{__('messages.logo')}</Label>
                   <Input
                     id="logo"
-                    type="text"
-                    value={data.logo}
-                    onChange={(e) => setData('logo', e.target.value)}
+                    type="file"
+                    onChange={handleFileChange}
+                    accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                    ref={fileInputRef}
                   />
                   {errors.logo && (
                     <div className="text-red-500">{errors.logo}</div>
+                  )}
+                  {restaurant.logo && (
+                    <div className="mt-2">
+                      <img
+                        src={`/storage/${restaurant.logo}`}
+                        alt="Current Logo"
+                        className="h-20 w-20 object-cover"
+                      />
+                    </div>
                   )}
                 </div>
 

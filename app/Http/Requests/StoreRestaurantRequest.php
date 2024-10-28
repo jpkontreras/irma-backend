@@ -34,7 +34,19 @@ class StoreRestaurantRequest extends FormRequest
                 }),
             ],
             'description' => 'nullable|string',
-            'logo' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'name.unique' => __('messages.restaurant_name_already_exists'),
         ];
     }
 }

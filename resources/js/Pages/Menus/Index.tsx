@@ -156,7 +156,16 @@ export default function Index({ auth, restaurant, menus }: Props) {
             </div>
           </CardHeader>
           <CardContent>
-            {view === 'grid' ? (
+            {menus.data.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <p className="mb-4 text-lg text-gray-600">
+                  {__('messages.no_menus')}
+                </p>
+                <Link href={route('restaurants.menus.create', restaurant.id)}>
+                  <Button>{__('messages.add_new_menu')}</Button>
+                </Link>
+              </div>
+            ) : view === 'grid' ? (
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {menus.data.map((menu) => (
                   <Card key={menu.id} className="flex h-[200px] flex-col">
@@ -223,73 +232,75 @@ export default function Index({ auth, restaurant, menus }: Props) {
             )}
           </CardContent>
 
-          <CardFooter className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="flex items-center space-x-2 whitespace-nowrap">
-              <span className="text-sm text-gray-700">
-                {__('messages.per_page')}:
-              </span>
-              <Select
-                value={menus.per_page?.toString() || '15'}
-                onValueChange={handlePerPageChange}
-              >
-                <SelectTrigger className="w-[70px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[1, 10, 15, 30, 50, 100].map((value) => (
-                    <SelectItem key={value} value={value.toString()}>
-                      {value}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+          {menus.data.length > 0 && (
+            <CardFooter className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+              <div className="flex items-center space-x-2 whitespace-nowrap">
+                <span className="text-sm text-gray-700">
+                  {__('messages.per_page')}:
+                </span>
+                <Select
+                  value={menus.per_page?.toString() || '15'}
+                  onValueChange={handlePerPageChange}
+                >
+                  <SelectTrigger className="w-[70px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 10, 15, 30, 50, 100].map((value) => (
+                      <SelectItem key={value} value={value.toString()}>
+                        {value}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    href={menus.links[0].url || '#'}
-                    className={
-                      !menus.links[0].url
-                        ? 'pointer-events-none opacity-50'
-                        : ''
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href={menus.links[0].url || '#'}
+                      className={
+                        !menus.links[0].url
+                          ? 'pointer-events-none opacity-50'
+                          : ''
+                      }
+                    >
+                      {__('messages.previous')}
+                    </PaginationPrevious>
+                  </PaginationItem>
+                  {menus.links.slice(1, -1).map((link, index) => {
+                    if (link.url === null) {
+                      return (
+                        <PaginationItem key={index}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
                     }
-                  >
-                    {__('messages.previous')}
-                  </PaginationPrevious>
-                </PaginationItem>
-                {menus.links.slice(1, -1).map((link, index) => {
-                  if (link.url === null) {
                     return (
                       <PaginationItem key={index}>
-                        <PaginationEllipsis />
+                        <PaginationLink href={link.url} isActive={link.active}>
+                          {link.label}
+                        </PaginationLink>
                       </PaginationItem>
                     );
-                  }
-                  return (
-                    <PaginationItem key={index}>
-                      <PaginationLink href={link.url} isActive={link.active}>
-                        {link.label}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-                <PaginationItem>
-                  <PaginationNext
-                    href={menus.links[menus.links.length - 1].url || '#'}
-                    className={
-                      !menus.links[menus.links.length - 1].url
-                        ? 'pointer-events-none opacity-50'
-                        : ''
-                    }
-                  >
-                    {__('messages.next')}
-                  </PaginationNext>
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </CardFooter>
+                  })}
+                  <PaginationItem>
+                    <PaginationNext
+                      href={menus.links[menus.links.length - 1].url || '#'}
+                      className={
+                        !menus.links[menus.links.length - 1].url
+                          ? 'pointer-events-none opacity-50'
+                          : ''
+                      }
+                    >
+                      {__('messages.next')}
+                    </PaginationNext>
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </CardFooter>
+          )}
         </Card>
       </div>
     </AuthenticatedLayout>

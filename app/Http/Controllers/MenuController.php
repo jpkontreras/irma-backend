@@ -23,19 +23,19 @@ class MenuController extends Controller
         private CreateOrRedirectMenuAction $createOrRedirectMenuAction
     ) {}
 
-    public function index(Request $request, Restaurant $restaurant): JsonResponse|InertiaResponse
+    public function index(Request $request, Restaurant $restaurant): JsonResponse|InertiaResponse|RedirectResponse
     {
         $perPage = (int) $request->input('perPage', 15);
-        $page = (int) $request->input('page', 1);
+        $page = max(1, (int) $request->input('page', 1)); // Ensure page is at least 1
         $query = $restaurant->menus()->with('menuItems');
         $totalCount = $query->count();
-        $maxPage = ceil($totalCount / $perPage);
+        $maxPage = max(1, ceil($totalCount / $perPage)); // Ensure maxPage is at least 1
 
         if ($page > $maxPage) {
             return redirect()->route('restaurants.menus.index', [
                 'restaurant' => $restaurant->id,
                 'perPage' => $perPage,
-                'page' => 1,
+                'page' => $maxPage, // Redirect to the last page instead of first
             ]);
         }
 

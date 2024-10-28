@@ -26,7 +26,14 @@ class UpdateRestaurantRequest extends FormRequest
                 })->ignore($this->route('restaurant')),
             ],
             'description' => 'nullable|string',
-            'logo' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.unique' => __('messages.restaurant_name_already_exists'),
         ];
     }
 }

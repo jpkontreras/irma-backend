@@ -41,6 +41,7 @@ interface Restaurant {
   id: number;
   name: string;
   description: string;
+  logo: string | null;
 }
 
 interface Props extends PageProps {
@@ -102,6 +103,16 @@ export default function Index({ auth, restaurants }: Props) {
     }
   }, []);
 
+  const getLogoUrl = (logo: string | null) => {
+    if (!logo) {
+      return '/storage/images/restaurant-default.png';
+    }
+    const parts = logo.split('.');
+    const filename = parts.slice(0, -1).join('.');
+    const extension = parts.pop();
+    return `/storage/${filename}_600x600.${extension}`;
+  };
+
   return (
     <AuthenticatedLayout
       header={
@@ -141,31 +152,43 @@ export default function Index({ auth, restaurants }: Props) {
           </CardHeader>
           <CardContent>
             {view === 'grid' ? (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {restaurants.data.map((restaurant) => (
-                  <Card key={restaurant.id} className="flex h-[200px] flex-col">
-                    <CardHeader className="flex-shrink-0 py-4">
-                      <CardTitle className="line-clamp-1 overflow-hidden text-ellipsis">
-                        {restaurant.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-grow overflow-hidden">
-                      <p className="line-clamp-2 overflow-hidden text-ellipsis">
-                        {restaurant.description}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="flex-shrink-0 justify-end space-x-2">
-                      <Link href={route('restaurants.show', restaurant.id)}>
-                        <Button variant="outline">
-                          {__('messages.view_details')}
-                        </Button>
-                      </Link>
-                      <Link
-                        href={route('restaurants.menus.index', restaurant.id)}
-                      >
-                        <Button>{__('messages.view_menus')}</Button>
-                      </Link>
-                    </CardFooter>
+                  <Card key={restaurant.id} className="overflow-hidden">
+                    <div className="flex h-40">
+                      <div className="w-1/3">
+                        <img
+                          src={getLogoUrl(restaurant.logo)}
+                          alt={restaurant.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="flex w-2/3 flex-col justify-between p-3">
+                        <div>
+                          <CardTitle className="mb-1 line-clamp-1 text-lg font-bold">
+                            {restaurant.name}
+                          </CardTitle>
+                          <p className="mb-2 line-clamp-2 text-xs text-gray-600">
+                            {restaurant.description}
+                          </p>
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Link href={route('restaurants.show', restaurant.id)}>
+                            <Button variant="outline" size="sm">
+                              {__('messages.view_details')}
+                            </Button>
+                          </Link>
+                          <Link
+                            href={route(
+                              'restaurants.menus.index',
+                              restaurant.id,
+                            )}
+                          >
+                            <Button size="sm">{__('messages.menus')}</Button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
                   </Card>
                 ))}
               </div>
@@ -174,6 +197,7 @@ export default function Index({ auth, restaurants }: Props) {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>{__('messages.logo')}</TableHead>
                       <TableHead>{__('messages.name')}</TableHead>
                       <TableHead>{__('messages.description')}</TableHead>
                       <TableHead>{__('messages.actions')}</TableHead>
@@ -182,6 +206,13 @@ export default function Index({ auth, restaurants }: Props) {
                   <TableBody>
                     {restaurants.data.map((restaurant) => (
                       <TableRow key={restaurant.id}>
+                        <TableCell>
+                          <img
+                            src={getLogoUrl(restaurant.logo)}
+                            alt={restaurant.name}
+                            className="h-10 w-10 rounded-full object-cover"
+                          />
+                        </TableCell>
                         <TableCell className="max-w-[200px]">
                           <div className="line-clamp-2 overflow-hidden text-ellipsis">
                             {restaurant.name}

@@ -14,6 +14,8 @@ use Illuminate\Http\Response;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Jobs\ResizeRestaurantLogo;
 
 class RestaurantController extends Controller
 {
@@ -32,7 +34,7 @@ class RestaurantController extends Controller
             ]);
         }
 
-        $restaurants = $query->paginate($perPage, ['*'], 'page', $page)->withQueryString();
+        $restaurants = $query->paginate($perPage, ['*'], 'page', $page);
 
         if ($request->wantsJson()) {
             return RestaurantResource::collection($restaurants);
@@ -40,6 +42,7 @@ class RestaurantController extends Controller
 
         return Inertia::render('Restaurants/Index', [
             'restaurants' => $restaurants,
+            'filters' => $request->all(['search', 'perPage']), // Add any other query parameters you want to preserve
         ]);
     }
 
@@ -62,11 +65,20 @@ class RestaurantController extends Controller
     public function store(StoreRestaurantRequest $request)
     {
         $validated = $request->validated();
+
+        if ($request->hasFile('logo')) {
+            $path = $request->file('logo')->store('restaurant_logos', 'public');
+            $validated['logo'] = $path;
+
+            // Dispatch the job to resize the logo
+            ResizeRestaurantLogo::dispatch($path);
+        }
+
         $validated['user_id'] = Auth::id();
 
         $restaurant = Restaurant::create($validated);
 
-        return redirect()->route('restaurants.show', $restaurant)
+        return redirect()->route('restaurants.index')
             ->with('success', __('messages.restaurant_created'));
     }
 
@@ -92,13 +104,49 @@ class RestaurantController extends Controller
 
     public function update(UpdateRestaurantRequest $request, Restaurant $restaurant)
     {
-        $restaurant->update($request->validated());
-        return redirect()->route('restaurants.show', $restaurant)->with('success', __('messages.restaurant_updated'));
+        $validated = $request->validated();
+
+        if ($request->hasFile('logo')) {
+            // Delete old logo and its resized versions
+            $this->deleteOldLogo($restaurant->logo);
+
+            // Store and process new logo
+            $path = $request->file('logo')->store('restaurant_logos', 'public');
+            $validated['logo'] = $path;
+
+            // Dispatch the job to resize the new logo
+            ResizeRestaurantLogo::dispatch($path);
+        }
+
+        $restaurant->update($validated);
+
+        return redirect()->route('restaurants.show', $restaurant)
+            ->with('success', __('messages.restaurant_updated'));
     }
 
     public function destroy(Restaurant $restaurant): Response
     {
         $restaurant->delete();
         return response()->noContent();
+    }
+
+    private function deleteOldLogo(?string $oldLogoPath): void
+    {
+        if ($oldLogoPath) {
+            // Delete the original logo
+            Storage::disk('public')->delete($oldLogoPath);
+
+            // Delete resized versions
+            $directory = dirname($oldLogoPath);
+            $filename = pathinfo($oldLogoPath, PATHINFO_FILENAME);
+            $extension = pathinfo($oldLogoPath, PATHINFO_EXTENSION);
+
+            $sizes = [150, 300, 600, 1200];
+            foreach ($sizes as $size) {
+                $resizedFilename = "{$filename}_{$size}x{$size}.{$extension}";
+                $resizedPath = "{$directory}/{$resizedFilename}";
+                Storage::disk('public')->delete($resizedPath);
+            }
+        }
     }
 }

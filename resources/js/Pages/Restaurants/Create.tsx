@@ -8,18 +8,32 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
 import { Head, useForm } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 export default function Create({ auth }: PageProps) {
   const { toast } = useToast();
+  const [filename, setFilename] = useState<string>('');
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
     description: '',
-    logo: '',
+    logo: null as File | null,
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (data.logo && data.logo.size > 2 * 1024 * 1024) {
+      toast({
+        title: __('messages.error'),
+        description: __('messages.logo_size_error'),
+        variant: 'destructive',
+        duration: 3000,
+      });
+      return;
+    }
+
     post(route('restaurants.store'), {
       preserveState: true,
       preserveScroll: true,
@@ -40,6 +54,25 @@ export default function Create({ auth }: PageProps) {
         });
       },
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast({
+          title: __('messages.error'),
+          description: __('messages.logo_size_error'),
+          variant: 'destructive',
+          duration: 3000,
+        });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
+      setData('logo', file);
+    }
   };
 
   return (
@@ -94,8 +127,10 @@ export default function Create({ auth }: PageProps) {
                   <Label htmlFor="logo">{__('messages.logo')}</Label>
                   <Input
                     id="logo"
-                    value={data.logo}
-                    onChange={(e) => setData('logo', e.target.value)}
+                    type="file"
+                    onChange={handleFileChange}
+                    accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                    ref={fileInputRef}
                   />
                   {errors.logo && (
                     <p className="mt-1 text-sm text-red-600">{errors.logo}</p>
