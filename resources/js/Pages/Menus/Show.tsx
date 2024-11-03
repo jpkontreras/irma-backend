@@ -2,9 +2,16 @@ import Reveal from '@/Components/Reveal';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
+import { BookOpen, PlusCircle } from 'lucide-react';
 
 interface MenuItem {
   id: number;
@@ -69,13 +76,13 @@ export default function Show({
           </CardHeader>
           <CardContent>
             <Reveal text={menu.description} lineClamp={3} />
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
               <Link
                 href={route('restaurants.menus.edit', [restaurant.id, menu.id])}
               >
                 <Button variant="outline">{__('messages.edit_menu')}</Button>
               </Link>
-              <div className="space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={route('restaurants.menus.menu-items.index', [
                     restaurant.id,
@@ -85,15 +92,44 @@ export default function Show({
                   <Button>{__('messages.view_all_menu_items')}</Button>
                 </Link>
                 <Link
-                  href={route('restaurants.menus.menu-items.create', [
-                    restaurant.id,
-                    menu.id,
-                  ])}
+                  href={route('restaurants.menus.menu-items.create', {
+                    restaurant: restaurant.id,
+                    menu: menu.id,
+                  })}
                 >
-                  <Button variant="outline">
+                  <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" />
                     {__('messages.add_menu_item')}
                   </Button>
                 </Link>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Link
+                          href={route('restaurants.menus.carte.edit', {
+                            restaurant: restaurant.id,
+                            menu: menu.id,
+                          })}
+                        >
+                          <Button
+                            variant="outline"
+                            disabled={menu.menu_items.length === 0}
+                          >
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            {__('messages.manage_carte')}
+                          </Button>
+                        </Link>
+                      </div>
+                    </TooltipTrigger>
+                    {menu.menu_items.length === 0 && (
+                      <TooltipContent>
+                        <p>{__('messages.add_items_before_carte')}</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
           </CardContent>

@@ -62,4 +62,22 @@ class Menu extends Model
     {
         return $this->getLabels()->where('type', Label::TAG)->pluck('name');
     }
+
+    public function categories(): Collection
+    {
+        return Label::categories()
+            ->whereHas('menuItems', function ($query) {
+                $query->where('menu_id', $this->id);
+            })
+            ->get();
+    }
+
+    public function tags(): Collection
+    {
+        return Label::tags()
+            ->whereHas('menuItems', function ($query) {
+                $query->where('menu_id', $this->id);
+            })
+            ->get();
+    }
 }

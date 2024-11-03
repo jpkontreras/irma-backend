@@ -31,12 +31,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
 import {
   Beef,
+  BookOpen,
   CakeSlice,
   Coffee,
   CookingPot,
@@ -174,17 +181,47 @@ export default function Index({ auth, restaurant, menu, menuItems }: Props) {
                   {__('messages.table_view')}
                 </Button>
               </div>
-              <Link
-                href={route('restaurants.menus.menu-items.create', {
-                  restaurant: restaurant.id,
-                  menu: menu.id,
-                })}
-              >
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  {__('messages.add_menu_item')}
-                </Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href={route('restaurants.menus.menu-items.create', {
+                    restaurant: restaurant.id,
+                    menu: menu.id,
+                  })}
+                >
+                  <Button>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    {__('messages.add_menu_item')}
+                  </Button>
+                </Link>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div>
+                        <Link
+                          href={route('restaurants.menus.carte.edit', {
+                            restaurant: restaurant.id,
+                            menu: menu.id,
+                          })}
+                        >
+                          <Button
+                            variant="outline"
+                            disabled={menuItems.data.length === 0}
+                          >
+                            <BookOpen className="mr-2 h-4 w-4" />
+                            {__('messages.manage_carte')}
+                          </Button>
+                        </Link>
+                      </div>
+                    </TooltipTrigger>
+                    {menuItems.data.length === 0 && (
+                      <TooltipContent>
+                        <p>{__('messages.add_items_before_carte')}</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
           </CardHeader>
           <CardContent>

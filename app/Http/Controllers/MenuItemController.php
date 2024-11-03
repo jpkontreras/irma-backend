@@ -47,24 +47,11 @@ class MenuItemController extends Controller
         ]);
     }
 
-    public function store(Request $request, Restaurant $restaurant, Menu $menu, AddMenuItemAction $action)
+    public function store(StoreMenuItemRequest $request, Restaurant $restaurant, Menu $menu)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'category_ids' => 'nullable|array',
-            'category_ids.*' => 'exists:labels,id',
-            'tag_ids' => 'nullable|array',
-            'tag_ids.*' => 'exists:labels,id',
-        ]);
+        $menuItem = $menu->menuItems()->create($request->validated());
 
-        $menuItem = $action->execute($menu, $validated);
-
-        return redirect()->route('restaurants.menus.menu-items.create', [
-            'restaurant' => $restaurant->id,
-            'menu' => $menu->id,
-        ])->with('success', 'Menu item created successfully.');
+        return redirect()->back();
     }
 
     public function show(Restaurant $restaurant, Menu $menu, MenuItem $menuItem): View

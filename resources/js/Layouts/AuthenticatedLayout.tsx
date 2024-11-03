@@ -265,7 +265,7 @@ export default function Authenticated({
           </header>
 
           <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-100 dark:bg-gray-900">
-            <div className="w-full px-6 py-8">{children}</div>
+            <div className="w-full">{children}</div>
           </main>
         </div>
       </SidebarInset>
