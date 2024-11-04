@@ -2,16 +2,10 @@ import Reveal from '@/Components/Reveal';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
-import { BookOpen, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 
 interface MenuItem {
   id: number;
@@ -102,34 +96,6 @@ export default function Show({
                     {__('messages.add_menu_item')}
                   </Button>
                 </Link>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div>
-                        <Link
-                          href={route('restaurants.menus.carte.edit', {
-                            restaurant: restaurant.id,
-                            menu: menu.id,
-                          })}
-                        >
-                          <Button
-                            variant="outline"
-                            disabled={menu.menu_items.length === 0}
-                          >
-                            <BookOpen className="mr-2 h-4 w-4" />
-                            {__('messages.manage_carte')}
-                          </Button>
-                        </Link>
-                      </div>
-                    </TooltipTrigger>
-                    {menu.menu_items.length === 0 && (
-                      <TooltipContent>
-                        <p>{__('messages.add_items_before_carte')}</p>
-                      </TooltipContent>
-                    )}
-                  </Tooltip>
-                </TooltipProvider>
               </div>
             </div>
           </CardContent>

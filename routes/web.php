@@ -6,7 +6,6 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuggestionController;
-use App\Http\Controllers\CarteController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,12 +35,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/restaurants/{restaurant}/menus/create-or-redirect', [MenuController::class, 'createOrRedirect'])
         ->name('restaurants.menus.create-or-redirect');
-
-    Route::get('/restaurants/{restaurant}/menus/{menu}/carte', [CarteController::class, 'edit'])
-        ->name('restaurants.menus.carte.edit');
-
-    Route::post('/restaurants/{restaurant}/menus/{menu}/carte', [CarteController::class, 'update'])
-        ->name('restaurants.menus.carte.update');
 });
 
 Route::get('/suggestions', SuggestionController::class)->name('suggestions.fetch');

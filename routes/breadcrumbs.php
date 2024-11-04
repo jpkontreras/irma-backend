@@ -82,9 +82,3 @@ Breadcrumbs::for('restaurants.menus.menu-items.edit', function (BreadcrumbTrail 
   $trail->parent('restaurants.menus.menu-items.show', $restaurant, $menu, $menuItem);
   $trail->push('messages.edit_menu_item', route('restaurants.menus.menu-items.edit', [$restaurant, $menu, $menuItem]));
 });
-
-// Menu Carte Builder
-Breadcrumbs::for('restaurants.menus.carte.edit', function (BreadcrumbTrail $trail, $restaurant, $menu) {
-  $trail->parent('restaurants.menus.show', $restaurant, $menu);
-  $trail->push('messages.carte_builder', route('restaurants.menus.carte.edit', [$restaurant, $menu]));
-});
