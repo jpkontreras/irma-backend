@@ -11,7 +11,7 @@ import {
   ChevronDown,
   Clock,
   PlusCircle,
-  ScanText,
+  ScanLine,
 } from 'lucide-react';
 
 interface Props extends PageProps {
@@ -138,9 +138,24 @@ export default function Dashboard({
                     <Button
                       variant="outline"
                       className="mt-auto w-full border-blue-300 text-blue-700 hover:bg-blue-100"
+                      onClick={() => {
+                        if (restaurantId) {
+                          window.location.href = route(
+                            'restaurants.menus.digitalize.create',
+                            {
+                              restaurant: restaurantId,
+                            },
+                          );
+                        } else {
+                          // Handle case where there's no restaurant
+                          console.error('No restaurant available');
+                          // You might want to show a toast notification or redirect to restaurant creation
+                        }
+                      }}
+                      disabled={!restaurantId}
                     >
-                      <ScanText className="mr-2 h-4 w-4" />
-                      {__('messages.scan_menu')}
+                      <ScanLine className="mr-2 h-4 w-4" />
+                      {__('messages.digitalize_menu')}
                     </Button>
                   </CardContent>
                 </Card>

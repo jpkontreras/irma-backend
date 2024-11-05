@@ -82,3 +82,14 @@ Breadcrumbs::for('restaurants.menus.menu-items.edit', function (BreadcrumbTrail 
   $trail->parent('restaurants.menus.menu-items.show', $restaurant, $menu, $menuItem);
   $trail->push('messages.edit_menu_item', route('restaurants.menus.menu-items.edit', [$restaurant, $menu, $menuItem]));
 });
+
+// Menu Digitalization
+Breadcrumbs::for('restaurants.menus.digitalize.create', function (BreadcrumbTrail $trail, $restaurant) {
+  $trail->parent('restaurants.menus.index', $restaurant);
+  $trail->push('messages.digitalize_menu', route('restaurants.menus.digitalize.create', $restaurant));
+});
+
+Breadcrumbs::for('restaurants.menus.digitalize.processing', function (BreadcrumbTrail $trail, $restaurant, $batch) {
+  $trail->parent('restaurants.menus.digitalize.create', $restaurant);
+  $trail->push('messages.processing_menu', route('restaurants.menus.digitalize.processing', [$restaurant, $batch]));
+});

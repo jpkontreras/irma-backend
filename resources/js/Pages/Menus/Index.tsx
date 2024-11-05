@@ -34,7 +34,7 @@ import {
 import { PageProps } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { __ } from 'laravel-translator';
-import { Grid, Table2 } from 'lucide-react';
+import { Grid, ScanLine, Table2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface MenuItem {
@@ -150,8 +150,15 @@ export default function Index({ auth, restaurant, menus }: Props) {
                   {__('messages.table_view')}
                 </Button>
               </div>
-              <Link href={route('restaurants.menus.create', restaurant.id)}>
-                <Button>{__('messages.add_menu')}</Button>
+              <Link
+                href={route('restaurants.menus.digitalize.create', {
+                  restaurant: restaurant.id,
+                })}
+              >
+                <Button variant="outline">
+                  <ScanLine className="mr-2 h-4 w-4" />
+                  {__('messages.digitalize_menu')}
+                </Button>
               </Link>
             </div>
           </CardHeader>

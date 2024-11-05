@@ -6,6 +6,7 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SuggestionController;
+use App\Http\Controllers\MenuDigitalizationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,7 +20,8 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -29,14 +31,27 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
+    // API endpoints
+    Route::get('/suggestions', SuggestionController::class)->name('suggestions.fetch');
+
+    // Restaurant specific routes (non-resource)
+    Route::post('/restaurants/{restaurant}/menus/create-or-redirect', [MenuController::class, 'createOrRedirect'])
+        ->name('restaurants.menus.create-or-redirect');
+
+    // Menu digitalization routes
+    Route::get('/restaurants/{restaurant}/menus/digitalize', [MenuDigitalizationController::class, 'create'])
+        ->name('restaurants.menus.digitalize.create');
+    Route::post('/restaurants/{restaurant}/menus/digitalize', [MenuDigitalizationController::class, 'store'])
+        ->name('restaurants.menus.digitalize.store');
+    Route::get('/restaurants/{restaurant}/menus/digitalize/{batch}/processing', [MenuDigitalizationController::class, 'processing'])
+        ->name('restaurants.menus.digitalize.processing');
+    Route::get('/restaurants/{restaurant}/menus/digitalize/{batch}/status', [MenuDigitalizationController::class, 'status'])
+        ->name('restaurants.menus.digitalize.status');
+
+    // Resource routes
     Route::resource('restaurants', RestaurantController::class);
     Route::resource('restaurants.menus', MenuController::class);
     Route::resource('restaurants.menus.menu-items', MenuItemController::class);
-
-    Route::post('/restaurants/{restaurant}/menus/create-or-redirect', [MenuController::class, 'createOrRedirect'])
-        ->name('restaurants.menus.create-or-redirect');
 });
-
-Route::get('/suggestions', SuggestionController::class)->name('suggestions.fetch');
 
 require __DIR__ . '/auth.php';
