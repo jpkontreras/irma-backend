@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use OpenAI\Laravel\Facades\OpenAI;
-use App\Support\MenuDigitalization\ErrorMessages;
+
 
 class ProcessMenuFiles implements ShouldQueue
 {
@@ -117,6 +117,24 @@ class ProcessMenuFiles implements ShouldQueue
     }
   }
 
+  private function getImageHash(string $filePath): string
+  {
+    return hash('sha256', file_get_contents($filePath));
+  }
+
+  private function getCachedMenuData(string $imageHash): ?array
+  {
+    $cacheKey = "menu_analysis:{$imageHash}";
+    return Cache::get($cacheKey);
+  }
+
+  private function cacheMenuData(string $imageHash, array $menuData): void
+  {
+    $cacheKey = "menu_analysis:{$imageHash}";
+    // Cache for 30 days
+    Cache::put($cacheKey, $menuData, now()->addDays(30));
+  }
+
   public function handle(): void
   {
     try {
@@ -163,51 +181,72 @@ class ProcessMenuFiles implements ShouldQueue
             throw new \Exception(json_encode($this->createError('PROC_004')));
           }
 
-          // Process single image with OpenAI
-          $messages = [
-            [
-              'role' => 'system',
-              'content' => $formattedPrompt
-            ],
-            [
-              'role' => 'user',
-              'content' => [
-                [
-                  'type' => 'text',
-                  'text' => 'Analyze this menu image and extract all relevant information.'
-                ],
-                [
-                  'type' => 'image_url',
-                  'image_url' => [
-                    'url' => "data:image/jpeg;base64," . base64_encode(file_get_contents($filePath))
+          // Generate hash for the image
+          $imageHash = $this->getImageHash($filePath);
+
+          // Check if we have cached results
+          $cachedData = $this->getCachedMenuData($imageHash);
+
+          if ($cachedData) {
+            // Use cached data instead of processing again
+            $menuData = $cachedData;
+            $confidenceScore = $menuData['confidence_score'] ?? 0;
+            $isLikelyMenu = $confidenceScore >= 70;
+
+            Log::info('Using cached menu analysis', [
+              'image_hash' => $imageHash,
+              'restaurant_id' => $this->restaurantId
+            ]);
+          } else {
+            // Process single image with OpenAI
+            $messages = [
+              [
+                'role' => 'system',
+                'content' => $formattedPrompt
+              ],
+              [
+                'role' => 'user',
+                'content' => [
+                  [
+                    'type' => 'text',
+                    'text' => 'Analyze this menu image and extract all relevant information.'
+                  ],
+                  [
+                    'type' => 'image_url',
+                    'image_url' => [
+                      'url' => "data:image/jpeg;base64," . base64_encode(file_get_contents($filePath))
+                    ]
                   ]
                 ]
               ]
-            ]
-          ];
+            ];
 
-          try {
-            $response = OpenAI::chat()->create([
-              'model' => 'gpt-4o-mini',
-              'messages' => $messages,
-            ]);
-          } catch (\Exception $e) {
-            throw new \Exception(json_encode($this->createError('AI_001', $e->getMessage())));
-          }
+            try {
+              $response = OpenAI::chat()->create([
+                'model' => 'gpt-4o-mini',
+                'messages' => $messages,
+              ]);
+            } catch (\Exception $e) {
+              throw new \Exception(json_encode($this->createError('AI_001', $e->getMessage())));
+            }
 
-          $menuData = $this->extractJsonFromResponse($response->choices[0]->message->content);
+            $menuData = $this->extractJsonFromResponse($response->choices[0]->message->content);
 
-          if (!$menuData) {
-            throw new \Exception(json_encode($this->createError('VAL_001')));
+            if (!$menuData) {
+              throw new \Exception(json_encode($this->createError('VAL_001')));
+            }
+
+            // Cache the results for future use
+            $this->cacheMenuData($imageHash, $menuData);
+
+            $confidenceScore = $menuData['confidence_score'] ?? 0;
+            $isLikelyMenu = $confidenceScore >= 70;
           }
 
           // Validate menu structure
           if (!isset($menuData['categories']) || empty($menuData['categories'])) {
             throw new \Exception(json_encode($this->createError('VAL_002')));
           }
-
-          $confidenceScore = $menuData['confidence_score'] ?? 0;
-          $isLikelyMenu = $confidenceScore >= 70;
 
           if (!$isLikelyMenu) {
             $currentData['files'][] = [
