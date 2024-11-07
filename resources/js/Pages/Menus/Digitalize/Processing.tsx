@@ -224,60 +224,66 @@ const MenuDataDisplay = ({
   isProcessing: boolean;
 }) => {
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-medium">{menuData.categories[0].name}</h3>
+    <div className="space-y-8">
+      {menuData.categories.map((category, categoryIndex) => (
+        <div key={categoryIndex} className="space-y-6">
+          <h3 className="text-lg font-medium">{category.name}</h3>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[300px]">{__('messages.name')}</TableHead>
-            <TableHead className="w-[100px] text-right">
-              {__('messages.price')}
-            </TableHead>
-            <TableHead>{__('messages.description')}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {menuData.categories[0].items.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <Input
-                  value={item.name}
-                  onChange={(e) => {
-                    // TODO: Implement update logic
-                    console.log('Name updated:', e.target.value);
-                  }}
-                  className="w-full"
-                  disabled={isProcessing}
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  type="number"
-                  value={item.price || ''}
-                  onChange={(e) => {
-                    // TODO: Implement update logic
-                    console.log('Price updated:', e.target.value);
-                  }}
-                  className="w-full text-right"
-                  disabled={isProcessing}
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  value={item.description || ''}
-                  onChange={(e) => {
-                    // TODO: Implement update logic
-                    console.log('Description updated:', e.target.value);
-                  }}
-                  className="w-full"
-                  disabled={isProcessing}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[300px]">
+                  {__('messages.name')}
+                </TableHead>
+                <TableHead className="w-[100px] text-right">
+                  {__('messages.price')}
+                </TableHead>
+                <TableHead>{__('messages.description')}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {category.items.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Input
+                      value={item.name}
+                      onChange={(e) => {
+                        // TODO: Implement update logic
+                        console.log('Name updated:', e.target.value);
+                      }}
+                      className="w-full"
+                      disabled={isProcessing}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      type="number"
+                      value={item.price || ''}
+                      onChange={(e) => {
+                        // TODO: Implement update logic
+                        console.log('Price updated:', e.target.value);
+                      }}
+                      className="w-full text-right"
+                      disabled={isProcessing}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      value={item.description || ''}
+                      onChange={(e) => {
+                        // TODO: Implement update logic
+                        console.log('Description updated:', e.target.value);
+                      }}
+                      className="w-full"
+                      disabled={isProcessing}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ))}
 
       {/* Additional Information Section */}
       {(menuData.additional_info.dietary_notes ||
@@ -611,7 +617,7 @@ export default function Processing({ auth, restaurant, batch }: Props) {
       <Head title={__('messages.processing_menu')} />
 
       <div className="py-12">
-        <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
+        <div className="space-y-6 sm:px-6 lg:px-8">
           {/* Progress Card - Always visible when processing */}
           <AnimatePresence>
             {(batchData.status === 'waiting' ||

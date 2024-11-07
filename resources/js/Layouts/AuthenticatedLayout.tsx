@@ -264,7 +264,7 @@ export default function Authenticated({
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-100 dark:bg-gray-900">
+          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-100 dark:bg-gray-900 p-6">
             <div className="w-full">{children}</div>
           </main>
         </div>
